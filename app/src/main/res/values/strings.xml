@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">Junpu</string>
+    <string name="edit_message">Enter a message</string>
+    <string name="button_send">Send</string>
+    <string name="enter_id">Enter an ID</string>
+    <string name="user_id">User ID</string>
+    <string name="button_submit">Submit</string>
+    <string name="custom_spaceship">Customize your Spaceship</string>
+    <string name="new_battle">New Battle</string>
+    <string name="go_battle">Go to Battle</string>
+    <string name="button_friend">Friends</string>
+    <string name="achievements">Achievements</string>
+    <string name="button_main">Main</string>
+    <string name="button_history">History</string>
+    <string name="slash">/</string>
+    <string name="wins">Wins</string>
+    <string name="losses">Loss</string>
+    <string name="penalties">Penalties</string>
+    <string name="past_bike">Past Biking Session</string>
+    <string-array name="primary_secondary_colors">
+        <item>Red</item>
+        <item>Blue</item>
+        <item>Green</item>
+        <item>Gray</item>
+    </string-array>
+</resources>
