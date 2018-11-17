@@ -8,19 +8,14 @@
     android:background="@drawable/background">
 
     <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="248dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/space_ship" />
+        android:id="@+id/img_spaceship_secondary"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        app:layout_constraintBottom_toBottomOf="@+id/img_spaceship_primary"
+        app:layout_constraintEnd_toEndOf="@+id/img_spaceship_primary"
+        app:layout_constraintStart_toStartOf="@+id/img_spaceship_primary"
+        app:layout_constraintTop_toTopOf="@+id/img_spaceship_primary"
+        app:srcCompat="@drawable/secondary_gray" />
 
     <TextView
         android:id="@+id/textView4"
@@ -35,7 +30,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView6"
+        android:id="@+id/text_level"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TextView"
@@ -48,7 +43,7 @@
         tools:text="Lvl 3" />
 
     <TextView
-        android:id="@+id/textView7"
+        android:id="@+id/text_userid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -57,7 +52,7 @@
         android:textColor="@android:color/background_light"
         android:textSize="40sp"
         app:layout_constraintBottom_toBottomOf="@+id/textView4"
-        app:layout_constraintStart_toEndOf="@+id/textView6"
+        app:layout_constraintStart_toEndOf="@+id/text_level"
         app:layout_constraintTop_toTopOf="@+id/textView4"
         tools:text="Taesoo" />
 
@@ -67,13 +62,27 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="80dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:background="@drawable/energybar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+        app:layout_constraintTop_toBottomOf="@+id/img_spaceship_tertiary" />
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="201dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="80dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@drawable/energybar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/img_spaceship_tertiary" />
 
     <Button
         android:id="@+id/button"
@@ -126,12 +135,13 @@
         app:layout_constraintTop_toBottomOf="@+id/textView9" />
 
     <Button
-        android:id="@+id/button7"
+        android:id="@+id/btn_friends"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
+        android:onClick="showFriendList"
         android:text="@string/button_friend"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -153,7 +163,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/textView12"
+        android:id="@+id/text_wins"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -163,10 +173,11 @@
         android:textColor="@android:color/background_light"
         android:textSize="35sp"
         app:layout_constraintBottom_toTopOf="@+id/textView11"
-        app:layout_constraintEnd_toStartOf="@+id/textView10" />
+        app:layout_constraintEnd_toStartOf="@+id/textView10"
+        app:layout_constraintTop_toTopOf="@+id/textView10" />
 
     <TextView
-        android:id="@+id/textView13"
+        android:id="@+id/text_losses"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -176,7 +187,8 @@
         android:textColor="@android:color/background_light"
         android:textSize="35sp"
         app:layout_constraintBottom_toTopOf="@+id/textView11"
-        app:layout_constraintStart_toEndOf="@+id/textView10" />
+        app:layout_constraintStart_toEndOf="@+id/textView10"
+        app:layout_constraintTop_toTopOf="@+id/textView10" />
 
     <TextView
         android:id="@+id/textView11"
@@ -186,11 +198,11 @@
         android:layout_marginLeft="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginBottom="48dp"
+        android:layout_marginBottom="80dp"
         android:text="@string/slash"
         android:textColor="@android:color/background_light"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/imageView3"
+        app:layout_constraintBottom_toTopOf="@+id/img_spaceship_tertiary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -198,14 +210,14 @@
         android:id="@+id/textView14"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginBottom="48dp"
         android:text="@string/wins"
         android:textColor="@android:color/background_light"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/imageView3"
-        app:layout_constraintEnd_toStartOf="@+id/textView11" />
+        app:layout_constraintEnd_toStartOf="@+id/textView11"
+        app:layout_constraintTop_toBottomOf="@+id/text_wins" />
 
     <TextView
         android:id="@+id/textView15"
@@ -213,11 +225,263 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginBottom="48dp"
+        android:layout_marginTop="8dp"
         android:text="@string/losses"
         android:textColor="@android:color/background_light"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/imageView3"
-        app:layout_constraintStart_toEndOf="@+id/textView11" />
+        app:layout_constraintStart_toEndOf="@+id/textView11"
+        app:layout_constraintTop_toBottomOf="@+id/text_losses" />
+
+    <ImageView
+        android:id="@+id/img_spaceship_primary"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/primary_gray" />
+
+    <ImageView
+        android:id="@+id/img_spaceship_tertiary"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        app:layout_constraintBottom_toBottomOf="@+id/img_spaceship_secondary"
+        app:layout_constraintEnd_toEndOf="@+id/img_spaceship_secondary"
+        app:layout_constraintStart_toStartOf="@+id/img_spaceship_secondary"
+        app:layout_constraintTop_toTopOf="@+id/img_spaceship_secondary"
+        app:srcCompat="@drawable/tertiary_green" />
+
+    <ScrollView
+        android:id="@+id/friends_list"
+        android:layout_width="200dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="420dp"
+        android:layout_marginLeft="420dp"
+        android:layout_marginBottom="8dp"
+        android:background="@android:color/background_light"
+        app:layout_constraintBottom_toTopOf="@+id/button5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_friends_list">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fadingEdge="horizontal"
+            android:orientation="vertical">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bottom_border">
+
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:background="@drawable/bottom_border">
+
+                <TextView
+                    android:id="@+id/textView35"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:text="Chanju"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="25sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imageView2"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/textView37"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:text="Lvl 6"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="25sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imageView2"
+                    app:layout_constraintTop_toBottomOf="@+id/textView35" />
+
+                <ImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:tint="@color/colorPrimary"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/space_ship" />
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:background="@drawable/bottom_border">
+
+                <TextView
+                    android:id="@+id/textView38"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:text="TextView"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:background="@drawable/bottom_border"
+                tools:layout_editor_absoluteY="100dp">
+
+                <TextView
+                    android:id="@+id/textView39"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="TextView"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:background="@drawable/bottom_border">
+
+                <TextView
+                    android:id="@+id/textView40"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="TextView"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:background="@drawable/bottom_border">
+
+                <TextView
+                    android:id="@+id/textView41"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="TextView"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:background="@drawable/bottom_border">
+
+                <TextView
+                    android:id="@+id/textView42"
+                    android:layout_width="wrap_content"
+                    android:layout_height="23dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="TextView"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:background="@drawable/bottom_border">
+
+                <Button
+                    android:id="@+id/button15"
+                    android:layout_width="176dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="+ Add New Friend"
+                    android:textSize="25sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </android.support.constraint.ConstraintLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <TextView
+        android:id="@+id/text_friends_list"
+        android:layout_width="200dp"
+        android:layout_height="78dp"
+        android:layout_marginStart="420dp"
+        android:layout_marginLeft="420dp"
+        android:layout_weight="1"
+        android:background="@drawable/bottom_right_border_main"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="@string/button_friend"
+        android:textColor="@color/colorPrimary"
+        android:textSize="40sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

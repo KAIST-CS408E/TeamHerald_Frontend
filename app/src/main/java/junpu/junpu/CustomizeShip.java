@@ -68,57 +68,18 @@ public class CustomizeShip extends Activity implements OnItemSelectedListener {
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        String item = parent.getItemAtPosition(position).toString();
+        String color = parent.getItemAtPosition(position).toString();
 
         // store the color values and change the ship's colors depending on selection
         if(parent.getId() == R.id.choose_primary) {
-            ImageView primaryImg = (ImageView) findViewById(R.id.spaceship_primary);
-            primaryColor = item;
-            switch(item) {
-                case "Gray":
-                    primaryImg.setImageResource(R.drawable.primary_gray);
-                    break;
-                case "Red":
-                    primaryImg.setImageResource(R.drawable.primary_red);
-                    break;
-                case "Blue":
-                    primaryImg.setImageResource(R.drawable.primary_navy);
-                    break;
-                case "Green":
-                    primaryImg.setImageResource(R.drawable.primary_green);
-                    break;
-            }
+            primaryColor = color;
+            utils.setSpaceshipColors((ImageView) findViewById(R.id.spaceship_primary), "primary", color);
         } else if(parent.getId() == R.id.choose_secondary) {
-            ImageView secondaryImg = (ImageView) findViewById(R.id.spaceship_secondary);
-            secondaryColor = item;
-            switch(item) {
-                case "Gray":
-                    secondaryImg.setImageResource(R.drawable.secondary_gray);
-                    break;
-                case "Red":
-                    secondaryImg.setImageResource(R.drawable.secondary_red);
-                    break;
-                case "Blue":
-                    secondaryImg.setImageResource(R.drawable.secondary_navy);
-                    break;
-                case "Green":
-                    secondaryImg.setImageResource(R.drawable.secondary_green);
-                    break;
-            }
+            secondaryColor = color;
+            utils.setSpaceshipColors((ImageView) findViewById(R.id.spaceship_secondary), "secondary", color);
         } else {
-            ImageView secondaryImg = (ImageView) findViewById(R.id.spaceship_tertiary);
-            tertiaryColor = item;
-            switch(item) {
-                case "Red":
-                    secondaryImg.setImageResource(R.drawable.tertiary_red);
-                    break;
-                case "Blue":
-                    secondaryImg.setImageResource(R.drawable.tertiary_navy);
-                    break;
-                case "Green":
-                    secondaryImg.setImageResource(R.drawable.tertiary_green);
-                    break;
-            }
+            tertiaryColor = color;
+            utils.setSpaceshipColors((ImageView) findViewById(R.id.spaceship_tertiary), "tertiary", color);
         }
     }
 
@@ -148,12 +109,13 @@ public class CustomizeShip extends Activity implements OnItemSelectedListener {
                             e.printStackTrace();
                         }
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                //Handle Errors here
-            }
-        });
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //Handle Errors here
+                    }
+                });
 
         requestQueue.add(req);
     }

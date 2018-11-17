@@ -45,7 +45,7 @@
         app:layout_constraintStart_toEndOf="@+id/button9" />
 
     <ScrollView
-        android:id="@+id/scrollView2"
+        android:id="@+id/friends_list"
         android:layout_width="150dp"
         android:layout_height="0dp"
         android:layout_marginBottom="8dp"
@@ -244,7 +244,7 @@
         android:textColor="@color/colorPrimary"
         android:textSize="25sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/scrollView2"
+        app:layout_constraintStart_toEndOf="@+id/friends_list"
         app:layout_constraintTop_toBottomOf="@+id/textView28" />
 
     <TextView
@@ -260,7 +260,7 @@
         android:textColor="@color/colorPrimary"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/scrollView2"
+        app:layout_constraintStart_toEndOf="@+id/friends_list"
         app:layout_constraintTop_toBottomOf="@+id/textView47" />
 
     <TextView
@@ -276,7 +276,7 @@
         android:textColor="@color/colorPrimary"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/scrollView2"
+        app:layout_constraintStart_toEndOf="@+id/friends_list"
         app:layout_constraintTop_toBottomOf="@+id/textView48" />
 
     <TextView
@@ -292,7 +292,7 @@
         android:textColor="@color/colorPrimary"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/scrollView2"
+        app:layout_constraintStart_toEndOf="@+id/friends_list"
         app:layout_constraintTop_toBottomOf="@+id/textView50" />
 
     <TextView
@@ -309,7 +309,7 @@
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.505"
-        app:layout_constraintStart_toEndOf="@+id/scrollView2"
+        app:layout_constraintStart_toEndOf="@+id/friends_list"
         app:layout_constraintTop_toBottomOf="@+id/textView49" />
 
     <TextView
@@ -325,7 +325,7 @@
         android:textColor="@color/colorPrimary"
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/scrollView2"
+        app:layout_constraintStart_toEndOf="@+id/friends_list"
         app:layout_constraintTop_toBottomOf="@+id/textView51" />
 
     <TextView
@@ -343,7 +343,7 @@
         android:textColor="@color/colorPrimary"
         android:textSize="25sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/scrollView2"
+        app:layout_constraintStart_toEndOf="@+id/friends_list"
         app:layout_constraintTop_toBottomOf="@+id/textView30" />
 
 </android.support.constraint.ConstraintLayout>
