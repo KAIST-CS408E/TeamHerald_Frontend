@@ -14,10 +14,12 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ImageView;
 
@@ -33,6 +35,9 @@ import org.json.JSONObject;
 import org.json.JSONException;
 import org.json.JSONArray;
 import org.w3c.dom.Text;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Lobby extends AppCompatActivity {
     RequestQueue requestQueue;
@@ -80,6 +85,36 @@ public class Lobby extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String url = utils.URL + "user_info?id=" + "8f5b7333cca13357";
+        //String url = utils.URL + "user_info?id=" + Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, url, (String) null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject data) {
+                        // Show and setup main screen, or show registration screen
+                        try {
+                            userData = data.getJSONObject("userData");
+                            friends = data.getJSONArray("friends");
+                            sessions = data.getJSONArray("sessions");
+                            setupMainScreen();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO: Handle Errors here
+                    }
+                });
+
+        requestQueue.add(req);
+    }
+
     // Setup and show main screen
     private void setupMainScreen() {
         setContentView(R.layout.main);
@@ -96,7 +131,7 @@ public class Lobby extends AppCompatActivity {
         ImageView spaceshipTertiary = (ImageView) findViewById(R.id.img_spaceship_tertiary);
         TextView energyBar = (TextView) findViewById(R.id.energy_bar);
         try {
-            textLevel.setText("Lvl " + userData.getInt("level"));
+            textLevel.setText("Lvl\n" + userData.getInt("level"));
             textUsername.setText(userData.getString("user_id"));
             textWins.setText(userData.getInt("wins") + "");
             textLosses.setText(userData.getInt("losses") + "");
@@ -154,7 +189,7 @@ public class Lobby extends AppCompatActivity {
         inflater = this.getLayoutInflater();
 
         builder.setView(inflater.inflate(R.layout.dialog_start_battle, null))
-                .setPositiveButton("Start", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Battle!", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
 
@@ -275,7 +310,6 @@ public class Lobby extends AppCompatActivity {
                             new Response.Listener<JSONObject>() {
                                 @Override
                                 public void onResponse(JSONObject response) {
-                                    TextView text = (TextView) findViewById(R.id.show_username);
                                     try {
                                         if(response.getBoolean("is_success")) {
                                             // Update friends data
@@ -296,6 +330,7 @@ public class Lobby extends AppCompatActivity {
                                                     });
                                             requestQueue.add(req);
 
+                                            ((EditText) ((Dialog) addFriendDialog).findViewById(R.id.friend_username)).setText("");
                                             addFriendDialog.dismiss();
                                         } else {
                                             TextView errMsg = (TextView) ((Dialog) addFriendDialog).findViewById(R.id.dialog_err_msg);
@@ -360,12 +395,59 @@ public class Lobby extends AppCompatActivity {
             } else {
                 startBattleDialog.show();
 
+                Dialog dialogView = (Dialog) startBattleDialog;
+
+                List<String> categories = new ArrayList<String>();
+                for(int i = 0; i < friends.length(); i++) {
+                    JSONObject temp = friends.getJSONObject(i);
+                    categories.add(temp.getString("user_id"));
+                }
+
+                ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, categories);
+                dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+                Spinner chooseFriendSpinner = (Spinner) dialogView.findViewById(R.id.choose_friend);
+                chooseFriendSpinner.setAdapter(dataAdapter);
+
                 startBattleDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener()
                 {
                     @Override
                     public void onClick(View v) {
                         Dialog dialogView = (Dialog) startBattleDialog;
-                        dialogView.findViewById(R.id.friend_username);
+                        String friendUsername = ((Spinner) dialogView.findViewById(R.id.choose_friend)).getSelectedItem().toString();
+
+                        try {
+                            String[] keys = {"user_id", "opp_id"};
+                            String[] values = {userData.getString("user_id"), friendUsername};
+                            JSONObject data = utils.createJSONObj(keys, values);
+                            String url = utils.URL + "start_battle";
+                            JsonObjectRequest req = new JsonObjectRequest(url, data,
+                                    new Response.Listener<JSONObject>() {
+                                        @Override
+                                        public void onResponse(JSONObject response) {
+                                            TextView text = (TextView) findViewById(R.id.show_username);
+                                            try {
+                                                if (response.getBoolean("success")) {
+                                                    startBattleDialog.dismiss();
+                                                    Intent intent = new Intent(Lobby.this, Battle.class);
+                                                    startActivity(intent);
+                                                }
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    },
+                                    new Response.ErrorListener() {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                            //Handle Errors here
+                                        }
+                                    });
+
+                            requestQueue.add(req);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
             }
