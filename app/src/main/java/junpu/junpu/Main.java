@@ -44,6 +44,8 @@ public class Main extends AppCompatActivity {
     String userName;
 
     JSONObject userData;
+    JSONArray friends;
+    JSONArray sessions;
 
     AlertDialog dialog;
 
@@ -61,9 +63,15 @@ public class Main extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         // Show and setup main screen, or show registration screen
-                        if (response.has("android_id")) {
-                            userData = response;
-                            setupMainScreen();
+                        if (response.has("userData")) {
+                            try {
+                                userData = response.getJSONObject("userData");
+                                friends = response.getJSONArray("friends");
+                                sessions = response.getJSONArray("sessions");
+                                setupMainScreen();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         } else {
                             setContentView(R.layout.activity_main);
 
@@ -190,56 +198,33 @@ public class Main extends AppCompatActivity {
         dialog = builder.create();
     }
 
-    // Get friends data and populate friend list
+    // Display all friends data in friends list
     public void createFriendsList() {
-        // Get all friends data
-        String url = utils.URL + "get_friends?user_id=";
-        try {
-            url += userData.getString("user_id");
-        }catch (JSONException e) {
-            e.printStackTrace();
+        LinearLayout listContainer = (LinearLayout) findViewById(R.id.friends_list_container);
+        if(listContainer.getChildCount() > 0)
+            listContainer.removeAllViews();
+
+        for (int i = 0; i < friends.length(); i++) {
+            try {
+                JSONObject friend = friends.getJSONObject(i);
+
+                ConstraintLayout container = new ConstraintLayout(this);
+                LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                        getResources().getDimensionPixelSize(R.dimen.friend_entry_height));
+                container.setLayoutParams(params2);
+                container.setBackgroundResource(R.drawable.bottom_border);
+                listContainer.addView(container, 0);
+
+                createFriendEntryText(friend.getString("user_id"), true, container);
+                createFriendEntryText("Lvl " + friend.getInt("level"), false, container);
+
+                createFriendEntryImage(friend.getString("color_1"), "primary", container);
+                createFriendEntryImage(friend.getString("color_2"), "secondary", container);
+                createFriendEntryImage(friend.getString("color_3"), "tertiary", container);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
-
-        JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, url, (String) null,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray list) {
-                        try {
-                            // Display all friends data in friends list
-                            LinearLayout listContainer = (LinearLayout) findViewById(R.id.friends_list_container);
-                            if(listContainer.getChildCount() > 0)
-                                listContainer.removeAllViews();
-
-                            for (int i = 0; i < list.length(); i++) {
-                                JSONObject friend = list.getJSONObject(i);
-
-                                ConstraintLayout container = new ConstraintLayout(Main.this);
-                                LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                                        getResources().getDimensionPixelSize(R.dimen.friend_entry_height));
-                                container.setLayoutParams(params2);
-                                container.setBackgroundResource(R.drawable.bottom_border);
-                                listContainer.addView(container, 0);
-
-                                createFriendEntryText(friend.getString("user_id"), true, container);
-                                createFriendEntryText("Lvl " + friend.getInt("level"), false, container);
-
-                                createFriendEntryImage(friend.getString("color_1"), "primary", container);
-                                createFriendEntryImage(friend.getString("color_2"), "secondary", container);
-                                createFriendEntryImage(friend.getString("color_3"), "tertiary", container);
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener(){
-                    @Override
-                    public void onErrorResponse(VolleyError error){
-                        // TODO: handle exception here
-                    }
-                });
-        requestQueue.add(req);
-
     }
 
     // Handler for showing friends list
@@ -327,7 +312,24 @@ public class Main extends AppCompatActivity {
                                         TextView text = (TextView) findViewById(R.id.show_username);
                                         try {
                                             if(response.getBoolean("is_success")) {
-                                                createFriendsList();
+                                                // Update friends data
+                                                String url = utils.URL + "get_friends?user_id=" + userData.getString("user_id");
+                                                JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, url, (String) null,
+                                                        new Response.Listener<JSONArray>() {
+                                                            @Override
+                                                            public void onResponse(JSONArray list) {
+                                                                friends = list;
+                                                                createFriendsList();
+                                                            }
+                                                        },
+                                                        new Response.ErrorListener(){
+                                                            @Override
+                                                            public void onErrorResponse(VolleyError error){
+                                                                // TODO: handle exception here
+                                                            }
+                                                        });
+                                                requestQueue.add(req);
+
                                                 dialog.dismiss();
                                             } else {
                                                 TextView errMsg = (TextView) ((Dialog) dialog).findViewById(R.id.dialog_err_msg);
