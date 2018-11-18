@@ -87,6 +87,7 @@ public class CustomizeShip extends Activity implements OnItemSelectedListener {
         // TODO Auto-generated method stub
     }
 
+    // TODO: move from ship customziation back to main page
     public void createUser(View v) {
         String url = utils.URL + "add_user";
         String androidID = Secure.getString(getContentResolver(), Secure.ANDROID_ID);

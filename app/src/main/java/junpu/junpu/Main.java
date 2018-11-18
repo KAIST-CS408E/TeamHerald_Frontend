@@ -1,13 +1,18 @@
 package junpu.junpu;
 
 import android.animation.ObjectAnimator;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.provider.Settings;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -40,6 +45,8 @@ public class Main extends AppCompatActivity {
 
     JSONObject userData;
 
+    AlertDialog dialog;
+
     // TODO: onResume to get user information not onCreate
 
     @Override
@@ -47,11 +54,13 @@ public class Main extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         requestQueue = Volley.newRequestQueue(this);  // This setups up a new request queue which we will need to make HTTP requests.
 
+        // Check if device has user
         String url = utils.URL + "user_info?id=" + Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, url, (String) null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        // Show and setup main screen, or show registration screen
                         if (response.has("android_id")) {
                             userData = response;
                             setupMainScreen();
@@ -75,7 +84,7 @@ public class Main extends AppCompatActivity {
 
     }
 
-    // intent to move to ship customization page
+    // Verify user ID is not already in use, and then move to ship customization page
     public void verifyUserId(View view) {
         userName = this.inputNewUser.getText().toString();
         String url = utils.URL + "verify_user_id?user_id=" + userName;
@@ -105,6 +114,7 @@ public class Main extends AppCompatActivity {
         requestQueue.add(req);
     }
 
+    // Move to ship customization page
     private void moveToCustomization() {
         Intent intent = new Intent(this, CustomizeShip.class);
 
@@ -112,33 +122,13 @@ public class Main extends AppCompatActivity {
         startActivity(intent);
     }
 
+    // Setup and show main screen
     private void setupMainScreen() {
         setContentView(R.layout.main);
 
-        String url = utils.URL + "get_friends?user_id=";
-        try {
-            url += userData.getString("user_id");
-        }catch (JSONException e) {
-            e.printStackTrace();
-        }
+        createFriendsList();
 
-        url = utils.URL + "get_all_users";
-        JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, url, (String) null,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        createFriendList(response);
-                    }
-                },
-                new Response.ErrorListener(){
-                    @Override
-                    public void onErrorResponse(VolleyError error){
-                        // TODO: handle exception here
-                    }
-                });
-
-        requestQueue.add(req);
-
+        // Display user information
         TextView textLevel = (TextView) findViewById(R.id.text_level);
         TextView textUsername = (TextView) findViewById(R.id.text_userid);
         TextView textWins = (TextView) findViewById(R.id.text_wins);
@@ -147,7 +137,6 @@ public class Main extends AppCompatActivity {
         ImageView spaceshipSecondary = (ImageView) findViewById(R.id.img_spaceship_secondary);
         ImageView spaceshipTertiary = (ImageView) findViewById(R.id.img_spaceship_tertiary);
         TextView energyBar = (TextView) findViewById(R.id.energy_bar);
-
         try {
             textLevel.setText("Lvl " + userData.getInt("level"));
             textUsername.setText(userData.getString("user_id"));
@@ -170,6 +159,7 @@ public class Main extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        // Handler for hiding friends list
         TextView friendsText = (TextView) findViewById(R.id.text_friends_list);
         friendsText.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -184,35 +174,75 @@ public class Main extends AppCompatActivity {
                 animation2.start();
             }
         });
+
+        // Create dialog screen for adding friends
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+
+        builder.setView(inflater.inflate(R.layout.fragment_dialog_add_user, null))
+                .setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                });
+
+        dialog = builder.create();
     }
 
-    public void createFriendList(JSONArray list) {
+    // Get friends data and populate friend list
+    public void createFriendsList() {
+        // Get all friends data
+        String url = utils.URL + "get_friends?user_id=";
         try {
-            // TODO: add friend functionality
-
-            LinearLayout listContainer = (LinearLayout) findViewById(R.id.friends_list_container);
-            for (int i = 0; i < list.length(); i++) {
-                JSONObject friend = list.getJSONObject(i);
-
-                ConstraintLayout container = new ConstraintLayout(this);
-                LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                                                                                 getResources().getDimensionPixelSize(R.dimen.friend_entry_height));
-                container.setLayoutParams(params2);
-                container.setBackgroundResource(R.drawable.bottom_border);
-                listContainer.addView(container, 0);
-
-                createFriendEntryText(friend.getString("user_id"), true, container);
-                createFriendEntryText("Lvl " + friend.getInt("level"), false, container);
-
-                createFriendEntryImage(friend.getString("color_1"), "primary", container);
-                createFriendEntryImage(friend.getString("color_2"), "secondary", container);
-                createFriendEntryImage(friend.getString("color_3"), "tertiary", container);
-            }
-        } catch (JSONException e) {
+            url += userData.getString("user_id");
+        }catch (JSONException e) {
             e.printStackTrace();
         }
+
+        JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, url, (String) null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray list) {
+                        try {
+                            // Display all friends data in friends list
+                            LinearLayout listContainer = (LinearLayout) findViewById(R.id.friends_list_container);
+                            if(listContainer.getChildCount() > 0)
+                                listContainer.removeAllViews();
+
+                            for (int i = 0; i < list.length(); i++) {
+                                JSONObject friend = list.getJSONObject(i);
+
+                                ConstraintLayout container = new ConstraintLayout(Main.this);
+                                LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                                        getResources().getDimensionPixelSize(R.dimen.friend_entry_height));
+                                container.setLayoutParams(params2);
+                                container.setBackgroundResource(R.drawable.bottom_border);
+                                listContainer.addView(container, 0);
+
+                                createFriendEntryText(friend.getString("user_id"), true, container);
+                                createFriendEntryText("Lvl " + friend.getInt("level"), false, container);
+
+                                createFriendEntryImage(friend.getString("color_1"), "primary", container);
+                                createFriendEntryImage(friend.getString("color_2"), "secondary", container);
+                                createFriendEntryImage(friend.getString("color_3"), "tertiary", container);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener(){
+                    @Override
+                    public void onErrorResponse(VolleyError error){
+                        // TODO: handle exception here
+                    }
+                });
+        requestQueue.add(req);
+
     }
 
+    // Handler for showing friends list
     public void showFriendList(View view) {
         ScrollView friendsList = (ScrollView) findViewById(R.id.friends_list);
         ObjectAnimator animation1 = ObjectAnimator.ofFloat(friendsList, "translationX", -710);
@@ -225,6 +255,7 @@ public class Main extends AppCompatActivity {
         animation2.start();
     }
 
+    // Helper function for creating each entry in friends list
     private void createFriendEntryText(String text, Boolean isID, ConstraintLayout container) {
         TextView view = new TextView(this);
         view.setText(text);
@@ -245,6 +276,7 @@ public class Main extends AppCompatActivity {
         container.addView(view, params);
     }
 
+    // Handler for creating spaceship image for friend list
     private void createFriendEntryImage(String color, String part, ConstraintLayout container) {
         ImageView view = new ImageView(this);
         utils.setSpaceshipColors(view, part, color);
@@ -258,17 +290,65 @@ public class Main extends AppCompatActivity {
         container.addView(view, params);
     }
 
+    // Handler for showing add friend dialog and set up submit button click handler
     public void showNoticeDialog(View view) {
-        // Create an instance of the dialog fragment and show it
-        AddUserDialogFragment dialog = new AddUserDialogFragment();
-        Bundle bundle = new Bundle();
-        try {
-            bundle.putString("USERNAME", userData.getString("user_id"));
-            dialog.setArguments(bundle);
-            dialog.show(getSupportFragmentManager(), "AddUserDialogFragment");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        dialog.show();
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v) {
+                    String username = "";
+                    try {
+                        username = userData.getString("user_id");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Dialog dialogView = ((Dialog) dialog);
+                    String friendUsername = ((EditText) dialogView.findViewById(R.id.friend_username)).getText().toString();
+
+                    TextView errMsg = (TextView) dialogView.findViewById(R.id.dialog_err_msg);
+                    errMsg.setText("");
+                    // Verify that user ID is not equal to friend ID
+                    if (friendUsername.equals(username)){
+                        errMsg.setText("Invalid friend ID");
+                    }else{
+                        // POST request for adding friend
+                        String url = utils.URL + "add_friend";
+
+                        String[] keys = {"user_id", "friend_id"};
+                        String[] values = {username, friendUsername};
+                        JSONObject data = utils.createJSONObj(keys, values);
+
+                        JsonObjectRequest req = new JsonObjectRequest(url, data ,
+                                new Response.Listener<JSONObject>() {
+                                    @Override
+                                    public void onResponse(JSONObject response) {
+                                        TextView text = (TextView) findViewById(R.id.show_username);
+                                        try {
+                                            if(response.getBoolean("is_success")) {
+                                                createFriendsList();
+                                                dialog.dismiss();
+                                            } else {
+                                                TextView errMsg = (TextView) ((Dialog) dialog).findViewById(R.id.dialog_err_msg);
+                                                errMsg.setText("Invalid friend ID");
+                                            }
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                },
+                                new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                        //Handle Errors here
+                                    }
+                                });
+
+                        requestQueue.add(req);
+                    }
+                }
+            });
     }
 }
 
