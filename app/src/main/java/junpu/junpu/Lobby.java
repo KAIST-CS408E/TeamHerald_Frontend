@@ -40,8 +40,10 @@ public class Lobby extends AppCompatActivity {
     JSONObject userData;
     JSONArray friends;
     JSONArray sessions;
+    JSONObject battleData;
 
-    AlertDialog dialog;
+    AlertDialog addFriendDialog;
+    AlertDialog startBattleDialog;
 
     // TODO: onResume to get user information not onCreate
 
@@ -116,6 +118,8 @@ public class Lobby extends AppCompatActivity {
             }
         });
 
+        getBattleInfo();
+
         // Create dialog screen for adding friends
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -128,7 +132,21 @@ public class Lobby extends AppCompatActivity {
                     }
                 });
 
-        dialog = builder.create();
+        addFriendDialog = builder.create();
+
+        // Create dialog screen for starting battle
+        builder = new AlertDialog.Builder(this);
+        inflater = this.getLayoutInflater();
+
+        builder.setView(inflater.inflate(R.layout.dialog_start_battle, null))
+                .setPositiveButton("Start", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                });
+
+        startBattleDialog = builder.create();
     }
 
     // Display all friends data in friends list
@@ -209,10 +227,10 @@ public class Lobby extends AppCompatActivity {
     }
 
     // Handler for showing add friend dialog and set up submit button click handler
-    public void showNoticeDialog(View view) {
-        dialog.show();
+    public void showFriendDialog(View view) {
+        addFriendDialog.show();
 
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener()
+        addFriendDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v) {
@@ -222,7 +240,7 @@ public class Lobby extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                Dialog dialogView = ((Dialog) dialog);
+                Dialog dialogView = ((Dialog) addFriendDialog);
                 String friendUsername = ((EditText) dialogView.findViewById(R.id.friend_username)).getText().toString();
 
                 TextView errMsg = (TextView) dialogView.findViewById(R.id.dialog_err_msg);
@@ -263,9 +281,9 @@ public class Lobby extends AppCompatActivity {
                                                     });
                                             requestQueue.add(req);
 
-                                            dialog.dismiss();
+                                            addFriendDialog.dismiss();
                                         } else {
-                                            TextView errMsg = (TextView) ((Dialog) dialog).findViewById(R.id.dialog_err_msg);
+                                            TextView errMsg = (TextView) ((Dialog) addFriendDialog).findViewById(R.id.dialog_err_msg);
                                             errMsg.setText("Invalid friend ID");
                                         }
                                     } catch (JSONException e) {
@@ -284,6 +302,60 @@ public class Lobby extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    // Get battle information
+    private void getBattleInfo() {
+        try {
+            String url = utils.URL + "get_battle_info?user_id=" + userData.getString("user_id");
+            JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, url, (String) null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            battleData = response;
+                            try {
+                                Button battleBtn = (Button) findViewById(R.id.btn_battle);
+                                if (battleData.getBoolean("in_battle")) {
+                                    battleBtn.setText("Go to Battle");
+                                } else {
+                                    battleBtn.setText("New Battle");
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            // TODO: handle exception here
+                        }
+                    });
+            requestQueue.add(req);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void goToOrStartBattle(View view){
+        try {
+            if (battleData.getBoolean("in_battle")) {
+                Intent intent = new Intent(this, Battle.class);
+                startActivity(intent);
+            } else {
+                startBattleDialog.show();
+
+                startBattleDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                });
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }
 
