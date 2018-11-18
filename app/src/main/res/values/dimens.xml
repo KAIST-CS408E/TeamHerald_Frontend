@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="bar_size">300dp</dimen>
+    <dimen name="bar_unit">3dp</dimen>
+    <dimen name="empty_bar_size">1dp</dimen>
+    <dimen name="text_right_margin">12dp</dimen>
+    <dimen name="text_topbot_margin">16dp</dimen>
+    <dimen name="friend_entry_height">100dp</dimen>
+    <dimen name="friend_spaceship_size">80dp</dimen>
+    <dimen name="img_friend_spaceship_left">16dp</dimen>
+    <dimen name="img_friend_spaceship_top">8dp</dimen>
+</resources>
