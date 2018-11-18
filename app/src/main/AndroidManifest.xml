@@ -18,11 +18,15 @@
         <activity android:name=".Main">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CustomizeShip" android:parentActivityName=".Main">
-        </activity>
+        <activity
+            android:name=".CustomizeShip"
+            android:parentActivityName=".Main" />
+        <activity android:name=".Battle" />
+        <activity android:name=".Lobby"></activity>
     </application>
 
 </manifest>

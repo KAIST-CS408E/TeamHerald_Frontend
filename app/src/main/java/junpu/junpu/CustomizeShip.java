@@ -5,7 +5,11 @@ import android.app.Activity;
 import android.os.Bundle;
 import java.util.ArrayList;
 import java.util.List;
+
+import android.provider.Settings;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ImageView;
 import android.widget.AdapterView;
@@ -102,7 +106,7 @@ public class CustomizeShip extends Activity implements OnItemSelectedListener {
                         TextView text = (TextView) findViewById(R.id.show_username);
                         try {
                             if(response.getBoolean("success")) {
-                                text.setText("succesful");
+                                moveToLobby();
                             } else {
                                 text.setText("failure");
                             }
@@ -115,6 +119,30 @@ public class CustomizeShip extends Activity implements OnItemSelectedListener {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         //Handle Errors here
+                    }
+                });
+
+        requestQueue.add(req);
+    }
+
+    private void moveToLobby() {
+        String url = utils.URL + "user_info?id=" + Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, url, (String) null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        // Show and setup main screen, or show registration screen
+                        if (response.has("userData")) {
+                            Intent intent = new Intent(CustomizeShip.this, Lobby.class);
+                            intent.putExtra("junpu.junpu.DATA", response.toString());
+                            startActivity(intent);
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO: Handle Errors here
                     }
                 });
 
