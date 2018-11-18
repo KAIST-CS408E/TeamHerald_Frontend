@@ -45,6 +45,9 @@ public class Lobby extends AppCompatActivity {
     AlertDialog addFriendDialog;
     AlertDialog startBattleDialog;
 
+
+    Button historyButton;
+
     // TODO: onResume to get user information not onCreate
 
     @Override
@@ -63,6 +66,18 @@ public class Lobby extends AppCompatActivity {
         } catch (JSONException e){
             e.printStackTrace();
         }
+
+        historyButton = findViewById(R.id.history_button);
+        historyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e("TAG", "calling bike sesions");
+
+                Intent intent = new Intent(getApplicationContext(), BikeSessions.class);
+                intent.putExtra("DATA", sessions.toString());
+                startActivity(intent);
+            }
+        });
     }
 
     // Setup and show main screen

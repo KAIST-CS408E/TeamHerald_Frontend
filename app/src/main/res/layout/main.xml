@@ -22,7 +22,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/button5"
+        android:id="@+id/history_button"
         android:layout_width="130dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
