@@ -364,7 +364,8 @@ public class Lobby extends AppCompatActivity {
                 {
                     @Override
                     public void onClick(View v) {
-
+                        Dialog dialogView = (Dialog) startBattleDialog;
+                        dialogView.findViewById(R.id.friend_username);
                     }
                 });
             }
