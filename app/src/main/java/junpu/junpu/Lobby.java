@@ -58,6 +58,8 @@ public class Lobby extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
+
         requestQueue = Volley.newRequestQueue(this);  // This setups up a new request queue which we will need to make HTTP requests.
 
         Intent intent = getIntent();
@@ -83,6 +85,34 @@ public class Lobby extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        // Create dialog screen for adding friends
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+
+        builder.setView(inflater.inflate(R.layout.fragment_dialog_add_user, null))
+                .setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                });
+
+        addFriendDialog = builder.create();
+
+        // Create dialog screen for starting battle
+        builder = new AlertDialog.Builder(this);
+        inflater = this.getLayoutInflater();
+
+        builder.setView(inflater.inflate(R.layout.dialog_start_battle, null))
+                .setPositiveButton("Battle!", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                });
+
+        startBattleDialog = builder.create();
     }
 
     @Override
@@ -117,8 +147,6 @@ public class Lobby extends AppCompatActivity {
 
     // Setup and show main screen
     private void setupMainScreen() {
-        setContentView(R.layout.main);
-
         createFriendsList();
 
         // Display user information
@@ -169,34 +197,6 @@ public class Lobby extends AppCompatActivity {
         });
 
         getBattleInfo();
-
-        // Create dialog screen for adding friends
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        LayoutInflater inflater = this.getLayoutInflater();
-
-        builder.setView(inflater.inflate(R.layout.fragment_dialog_add_user, null))
-                .setPositiveButton("Submit", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-
-                    }
-                });
-
-        addFriendDialog = builder.create();
-
-        // Create dialog screen for starting battle
-        builder = new AlertDialog.Builder(this);
-        inflater = this.getLayoutInflater();
-
-        builder.setView(inflater.inflate(R.layout.dialog_start_battle, null))
-                .setPositiveButton("Battle!", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-
-                    }
-                });
-
-        startBattleDialog = builder.create();
     }
 
     // Display all friends data in friends list
@@ -391,6 +391,7 @@ public class Lobby extends AppCompatActivity {
         try {
             if (battleData.getBoolean("in_battle")) {
                 Intent intent = new Intent(this, Battle.class);
+                intent.putExtra("junpu.junpu.USERDATA", userData.toString());
                 startActivity(intent);
             } else {
                 startBattleDialog.show();
@@ -429,7 +430,9 @@ public class Lobby extends AppCompatActivity {
                                             try {
                                                 if (response.getBoolean("success")) {
                                                     startBattleDialog.dismiss();
+
                                                     Intent intent = new Intent(Lobby.this, Battle.class);
+                                                    intent.putExtra("junpu.junpu.USERDATA", userData.toString());
                                                     startActivity(intent);
                                                 }
                                             } catch (JSONException e) {
