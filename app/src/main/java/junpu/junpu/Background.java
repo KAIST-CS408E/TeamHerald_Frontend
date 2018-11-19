@@ -37,6 +37,12 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.awareness.Awareness;
 import com.google.android.gms.awareness.state.Weather;
 import com.google.android.gms.awareness.snapshot.WeatherResponse;
@@ -53,6 +59,10 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -414,6 +424,51 @@ public class Background extends Service implements LocationListener, GoogleApiCl
 
         Log.e("TAG", "end stats, time: " + Long.toString(durationSeconds) + " distance: "+ Float.toString(totalDistance));
         Log.e("TAG", "phone use: " + Boolean.toString(phoneViolation));
+
+        //Make json object
+        JSONObject session = new JSONObject();
+        JSONArray penaltyArray = new JSONArray();
+        if(phoneViolation){
+            penaltyArray.put("phone");
+        }
+        try {
+            session.put("android_id", "8f5b7333cca13357");
+            session.put("duration", durationSeconds);
+            session.put("distance", totalDistance);
+            session.put("phone", penaltyArray);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        //Initialise queue
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = utils.URL + "add_session";
+
+        //Request a JSON Response
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST, url, session,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            if(response.getBoolean("success")){
+                                Log.e("TAG", "JSON RESPONSE SUCESS");
+                            }else{
+                                Log.e("TAG", "JSON RESPONSE FAIL");
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("TAG", "JSON REQUEST ERROR");
+                    }
+                });
+
+        //
+        queue.add(req);
     }
 
 
