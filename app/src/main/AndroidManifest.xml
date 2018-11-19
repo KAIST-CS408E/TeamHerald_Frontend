@@ -33,6 +33,12 @@
         <activity android:name=".Battle" />
         <activity android:name=".Lobby"></activity>
         <activity android:name=".BikeSessions"></activity>
+
+        <service android:name=".Background"
+            android:stopWithTask="false"/>
+
+        <receiver android:name=".PhoneUnlockedReceiver"/>
+
     </application>
 
 </manifest>
