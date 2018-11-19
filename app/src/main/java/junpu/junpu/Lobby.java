@@ -66,6 +66,7 @@ public class Lobby extends AppCompatActivity {
 
 
     Button historyButton;
+    Button achievementsButton;
 
     // TODO: onResume to get user information not onCreate
 
@@ -88,6 +89,7 @@ public class Lobby extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        //History Screen
         historyButton = findViewById(R.id.history_button);
         historyButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,6 +101,20 @@ public class Lobby extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        //Achievements screen
+        achievementsButton = findViewById(R.id.button6);
+        achievementsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e("TAG", "calling achievements");
+
+                Intent intent = new Intent(getApplicationContext(), Achievements.class);
+//                intent.putExtra("DATA", sessions.toString());
+                startActivity(intent);
+            }
+        });
+
 
         // Create dialog screen for adding friends
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

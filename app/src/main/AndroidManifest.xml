@@ -37,6 +37,7 @@
         <activity android:name=".Battle" />
         <activity android:name=".Lobby"></activity>
         <activity android:name=".BikeSessions"></activity>
+        <activity android:name=".Achievements"></activity>
 
         <service android:name=".Background"
             android:stopWithTask="false"/>
