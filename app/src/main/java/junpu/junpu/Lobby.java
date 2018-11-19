@@ -177,7 +177,7 @@ public class Lobby extends AppCompatActivity {
         ImageView spaceshipTertiary = (ImageView) findViewById(R.id.img_spaceship_tertiary);
         TextView energyBar = (TextView) findViewById(R.id.energy_bar);
         try {
-            textLevel.setText("Lvl\n" + userData.getInt("level"));
+            textLevel.setText("LVL\n" + userData.getInt("level"));
             textUsername.setText(userData.getString("user_id"));
             textWins.setText(userData.getInt("wins") + "");
             textLosses.setText(userData.getInt("losses") + "");
@@ -215,6 +215,22 @@ public class Lobby extends AppCompatActivity {
         });
 
         getBattleInfo();
+
+        ConstraintLayout restScreen = findViewById(R.id.lobby_rest_screen);
+        restScreen.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                ScrollView friendsList = (ScrollView) findViewById(R.id.friends_list);
+                ObjectAnimator animation1 = ObjectAnimator.ofFloat(friendsList, "translationX", 0);
+                animation1.setDuration(500);
+                animation1.start();
+
+                TextView textFriends = (TextView) findViewById(R.id.text_friends_list);
+                ObjectAnimator animation2 = ObjectAnimator.ofFloat(textFriends, "translationX", 0);
+                animation2.setDuration(500);
+                animation2.start();
+            }
+        });
+
     }
 
     // Display all friends data in friends list
@@ -249,12 +265,12 @@ public class Lobby extends AppCompatActivity {
     // Handler for showing friends list
     public void showFriendList(View view) {
         ScrollView friendsList = (ScrollView) findViewById(R.id.friends_list);
-        ObjectAnimator animation1 = ObjectAnimator.ofFloat(friendsList, "translationX", -710);
+        ObjectAnimator animation1 = ObjectAnimator.ofFloat(friendsList, "translationX", -775);
         animation1.setDuration(500);
         animation1.start();
 
         TextView textFriends = (TextView) findViewById(R.id.text_friends_list);
-        ObjectAnimator animation2 = ObjectAnimator.ofFloat(textFriends, "translationX", -710);
+        ObjectAnimator animation2 = ObjectAnimator.ofFloat(textFriends, "translationX", -775);
         animation2.setDuration(500);
         animation2.start();
     }
