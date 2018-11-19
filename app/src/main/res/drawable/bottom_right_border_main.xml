@@ -2,17 +2,20 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="@color/gray"/>
+            <solid android:color="@color/button_outline"/>
+            <corners android:topLeftRadius="16dp" />
         </shape>
     </item>
-    <item android:right="3dp">
+    <item>
         <shape android:shape="rectangle">
             <solid android:color="@color/colorPrimary"/>
+            <corners android:topLeftRadius="16dp" />
         </shape>
     </item>
-    <item android:bottom="5dp" android:right="3dp">
+    <item android:bottom="5dp">
         <shape android:shape="rectangle">
-            <solid android:color="@android:color/background_light"/>
+            <solid android:color="@color/button_solid"/>
+            <corners android:topLeftRadius="16dp" />
         </shape>
     </item>
 </layer-list>

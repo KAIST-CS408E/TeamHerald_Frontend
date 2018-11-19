@@ -7,42 +7,6 @@
     android:layout_height="match_parent"
     android:background="@drawable/background">
 
-    <Button
-        android:id="@+id/button4"
-        android:layout_width="130dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="16dp"
-        android:text="@string/button_main"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/history_button"
-        android:layout_width="130dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginBottom="16dp"
-        android:text="@string/button_history"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/button4" />
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="130dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="16dp"
-        android:text="@string/achievements"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/button4" />
-
     <android.support.constraint.ConstraintLayout
         android:id="@+id/lobby_rest_screen"
         android:layout_width="match_parent"
@@ -52,11 +16,10 @@
             android:id="@+id/text_userid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginLeft="32dp"
+            android:layout_marginStart="28dp"
             android:text="TextView"
             android:textColor="@android:color/background_light"
-            android:textSize="40sp"
+            android:textSize="32sp"
             app:layout_constraintBottom_toBottomOf="@+id/textView4"
             app:layout_constraintStart_toEndOf="@+id/text_level"
             app:layout_constraintTop_toTopOf="@+id/textView4"
@@ -64,10 +27,9 @@
 
         <TextView
             android:id="@+id/textView4"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
             android:background="@drawable/circle"
             android:textColor="@android:color/background_light"
@@ -89,11 +51,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
             android:layout_marginBottom="4dp"
             android:text="78"
             android:textColor="@android:color/background_light"
-            android:textSize="35sp"
+            android:textSize="34sp"
             app:layout_constraintBottom_toTopOf="@+id/textView11"
             app:layout_constraintEnd_toStartOf="@+id/textView10"
             app:layout_constraintTop_toTopOf="@+id/textView10" />
@@ -105,31 +66,30 @@
             android:gravity="center_horizontal"
             android:text="TextView"
             android:textColor="@android:color/background_light"
-            android:textSize="25sp"
+            android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="@+id/textView4"
             app:layout_constraintEnd_toEndOf="@+id/textView4"
             app:layout_constraintStart_toStartOf="@+id/textView4"
             app:layout_constraintTop_toTopOf="@+id/textView4"
-            tools:text="Lvl\n3" />
+            tools:text="LVL\n3" />
 
 
         <Button
             android:id="@+id/btn_battle"
-            android:layout_width="120dp"
-            android:layout_height="48dp"
+            android:layout_width="160dp"
+            android:layout_height="50dp"
             android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="24dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="10dp"
             android:background="@drawable/roundedbutton"
             android:onClick="goToOrStartBattle"
             android:stateListAnimator="@null"
             android:text="@string/new_battle"
-            app:layout_constraintBottom_toTopOf="@+id/energy_bar"
+            android:textColor="@color/button_outline"
+            android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/img_spaceship_primary" />
 
 
         <ImageView
@@ -158,11 +118,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
             android:layout_marginBottom="4dp"
             android:text="53"
             android:textColor="@android:color/background_light"
-            android:textSize="35sp"
+            android:textSize="34sp"
             app:layout_constraintBottom_toTopOf="@+id/textView11"
             app:layout_constraintStart_toEndOf="@+id/textView10"
             app:layout_constraintTop_toTopOf="@+id/textView10" />
@@ -172,13 +131,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
             android:layout_marginBottom="4dp"
             android:text="@string/slash"
             android:textColor="@android:color/background_light"
-            android:textSize="35sp"
+            android:textSize="34sp"
             app:layout_constraintBottom_toTopOf="@+id/textView11"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -188,25 +145,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="77dp"
+            android:layout_marginTop="21dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
             android:background="@drawable/empty_bar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/img_spaceship_tertiary" />
+            app:layout_constraintTop_toBottomOf="@+id/btn_battle" />
 
         <Button
             android:id="@+id/btn_friends"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
+            android:background="@drawable/roundedtab"
             android:onClick="showFriendList"
             android:stateListAnimator="@null"
-            android:text="@string/button_friend"
+            android:textColor="@color/button_outline"
+            android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -257,12 +212,11 @@
             android:id="@+id/energy_bar"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="80dp"
+            android:layout_marginTop="24dp"
             android:layout_marginEnd="3dp"
-            android:layout_marginRight="3dp"
             android:background="@drawable/energybar"
             app:layout_constraintEnd_toEndOf="@+id/empty_bar"
-            app:layout_constraintTop_toBottomOf="@+id/img_spaceship_tertiary" />
+            app:layout_constraintTop_toBottomOf="@+id/btn_battle" />
 
         <ImageView
             android:id="@+id/imageView13"
@@ -273,6 +227,17 @@
             app:layout_constraintStart_toStartOf="@+id/empty_bar"
             app:layout_constraintTop_toTopOf="@+id/empty_bar"
             app:srcCompat="@drawable/energy_icon" />
+
+        <ImageView
+            android:id="@+id/imageView7"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="18dp"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_friends"
+            app:layout_constraintStart_toStartOf="@+id/btn_friends"
+            app:layout_constraintTop_toTopOf="@+id/btn_friends"
+            app:srcCompat="@drawable/friends" />
+
     </android.support.constraint.ConstraintLayout>
 
     <ScrollView
@@ -280,9 +245,7 @@
         android:layout_width="200dp"
         android:layout_height="0dp"
         android:layout_marginStart="420dp"
-        android:layout_marginLeft="420dp"
-        android:layout_marginBottom="8dp"
-        android:background="@android:color/background_light"
+        android:background="@drawable/scrollable_friend_tab"
         app:layout_constraintBottom_toTopOf="@+id/history_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_friends_list">
@@ -375,16 +338,16 @@
                 <Button
                     android:id="@+id/button15"
                     android:layout_width="176dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginLeft="8dp"
+                    android:layout_height="80dp"
+                    android:layout_marginStart="21dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
-                    android:layout_marginRight="8dp"
                     android:layout_marginBottom="8dp"
+                    android:background="@drawable/roundedbutton"
                     android:onClick="showFriendDialog"
                     android:text="+ Add New Friend"
-                    android:textSize="25sp"
+                    android:textColor="@color/button_outline"
+                    android:textSize="20sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -399,14 +362,84 @@
         android:layout_width="200dp"
         android:layout_height="78dp"
         android:layout_marginStart="420dp"
-        android:layout_marginLeft="420dp"
         android:layout_weight="1"
         android:background="@drawable/bottom_right_border_main"
         android:gravity="center_vertical|center_horizontal"
         android:text="@string/button_friend"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/button_outline"
         android:textSize="40sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="0dp"
+        android:layout_height="58dp"
+        android:background="@drawable/menu_bar_selected"
+        android:stateListAnimator="@null"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/history_button"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/button6" />
+
+    <Button
+        android:id="@+id/history_button"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:background="@drawable/bottom_bar_unselected"
+        android:stateListAnimator="@null"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/button4" />
+
+    <Button
+        android:id="@+id/button6"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:background="@drawable/bottom_bar_unselected"
+        android:stateListAnimator="@null"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/button4"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView8"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/button6"
+        app:layout_constraintEnd_toEndOf="@+id/button6"
+        app:layout_constraintStart_toStartOf="@+id/button6"
+        app:layout_constraintTop_toTopOf="@+id/button6"
+        app:srcCompat="@drawable/badgemenu" />
+
+    <ImageView
+        android:id="@+id/imageView9"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/history_button"
+        app:layout_constraintStart_toEndOf="@+id/button6"
+        app:layout_constraintTop_toTopOf="@+id/button4"
+        app:srcCompat="@drawable/spaceship_menu" />
+
+    <ImageView
+        android:id="@+id/imageView14"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/history_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/history_button"
+        app:layout_constraintTop_toTopOf="@+id/history_button"
+        app:srcCompat="@drawable/history_menu" />
 
 </android.support.constraint.ConstraintLayout>

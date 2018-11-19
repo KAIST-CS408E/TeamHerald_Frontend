@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 
 import com.bignerdranch.expandablerecyclerview.Model.ParentObject;
 import junpu.junpu.Adapter.MyAdapter;
@@ -156,5 +157,9 @@ public class BikeSessions extends AppCompatActivity{
             i++;
         }
         return parentObject;
+    }
+
+    public void goToMain(View view){
+        finish();
     }
 }

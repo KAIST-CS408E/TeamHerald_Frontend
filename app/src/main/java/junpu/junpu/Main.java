@@ -64,6 +64,41 @@ public class Main extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // This setups up a new request queue which we will need to make HTTP requests.
+
+        // Check if device has user
+        String url = utils.URL + "user_info?id=" + "8f5b7333cca13357";
+        //String url = utils.URL + "user_info?id=" + Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, url, (String) null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        // Show and setup main screen, or show registration screen
+                        if (response.has("userData")) {
+                            moveToLobby(response);
+                        } else {
+                            setContentView(R.layout.activity_main);
+
+                            inputNewUser = (EditText) findViewById(R.id.input_new_user);
+                            btnSubmitId = (Button) findViewById(R.id.btn_submit_id);
+                            errorMsg = (TextView) findViewById(R.id.error_message);
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO: Handle Errors here
+                    }
+                });
+
+        requestQueue.add(req);
+
+    }
+
     // Verify user ID is not already in use, and then move to ship customization page
     public void verifyUserId(View view) {
         userName = this.inputNewUser.getText().toString();
