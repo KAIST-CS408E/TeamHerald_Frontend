@@ -2,7 +2,7 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/linearlayout"
+    android:id="@+id/battle_scene"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background">
@@ -113,6 +113,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
+        android:onClick="fireLaser"
         android:text="Fire!"
         android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -132,25 +133,25 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView10"
+        android:id="@+id/img_laser_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="400dp"
         android:layout_marginEnd="5dp"
         android:layout_marginRight="5dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/user_tertiary"
         app:layout_constraintEnd_toEndOf="@+id/user_tertiary"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/laser_beam" />
 
     <ImageView
-        android:id="@+id/imageView11"
+        android:id="@+id/img_laser_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
         android:layout_marginLeft="5dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/user_tertiary"
+        android:layout_marginTop="400dp"
         app:layout_constraintStart_toStartOf="@+id/user_tertiary"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/laser_beam" />
 
     <TextView

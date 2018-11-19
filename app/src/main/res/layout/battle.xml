@@ -33,7 +33,7 @@
         android:rotation="180"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearlayout"
+        app:layout_constraintTop_toBottomOf="@+id/battle_scene"
         app:srcCompat="@drawable/space_ship" />
 
     <ImageView
@@ -51,7 +51,7 @@
         app:srcCompat="@drawable/energybar" />
 
     <ImageView
-        android:id="@+id/linearlayout"
+        android:id="@+id/battle_scene"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -88,7 +88,7 @@
         android:text="Chanju"
         android:textColor="@android:color/background_light"
         android:textSize="30sp"
-        app:layout_constraintStart_toStartOf="@+id/linearlayout"
+        app:layout_constraintStart_toStartOf="@+id/battle_scene"
         app:layout_constraintTop_toBottomOf="@+id/battle_home_btn" />
 
     <TextView
@@ -112,7 +112,7 @@
         android:text="Lvl 6"
         android:textColor="@android:color/background_light"
         android:textSize="30sp"
-        app:layout_constraintEnd_toEndOf="@+id/linearlayout"
+        app:layout_constraintEnd_toEndOf="@+id/battle_scene"
         app:layout_constraintTop_toBottomOf="@+id/battle_home_btn" />
 
     <TextView
