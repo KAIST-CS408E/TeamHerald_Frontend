@@ -8,6 +8,26 @@
     android:background="@drawable/background">
 
     <ImageView
+        android:id="@+id/img_laser_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="400dp"
+        android:layout_marginEnd="5dp"
+        app:layout_constraintEnd_toEndOf="@+id/user_tertiary"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/laser_beam" />
+
+    <ImageView
+        android:id="@+id/img_laser_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="400dp"
+        app:layout_constraintStart_toStartOf="@+id/user_tertiary"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/laser_beam" />
+
+    <ImageView
         android:id="@+id/opp_tertiary"
         android:layout_width="125dp"
         android:layout_height="125dp"
@@ -57,9 +77,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginTop="16dp"
-        android:text="Chanju"
         android:textColor="@android:color/background_light"
         android:textSize="30sp"
         app:layout_constraintStart_toStartOf="@+id/textView7"
@@ -84,8 +102,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:text="Lvl 6"
         android:textColor="@android:color/background_light"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="@+id/textView7"
@@ -126,33 +142,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:onClick="goToLobby"
         android:text="Home"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/img_laser_1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="400dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginRight="5dp"
-        app:layout_constraintEnd_toEndOf="@+id/user_tertiary"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/laser_beam" />
-
-    <ImageView
-        android:id="@+id/img_laser_2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="400dp"
-        app:layout_constraintStart_toStartOf="@+id/user_tertiary"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/laser_beam" />
 
     <TextView
         android:id="@+id/opponent_healthbar"
@@ -267,4 +261,52 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/tertiary_green" />
+
+    <TextView
+        android:id="@+id/msg_no_energy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="24dp"
+        android:text="Not Enough Energy"
+        android:textColor="@color/colorEnergy"
+        android:textSize="24sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/msg_victory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Victory!"
+        android:textColor="@android:color/holo_orange_light"
+        android:textSize="54sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/user_tertiary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/opp_secondary" />
+
+    <ImageView
+        android:id="@+id/img_explosion"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/msg_victory"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/opp_secondary"
+        app:srcCompat="@drawable/explosion" />
 </android.support.constraint.ConstraintLayout>

@@ -49,6 +49,16 @@ public class Battle extends AppCompatActivity {
     ImageView userPrimary;
     ImageView userSecondary;
     ImageView userTertiary;
+    ImageView laser1;
+    ImageView laser2;
+
+    Button btnFire;
+
+    ConstraintLayout container;
+    TransitionSet set;
+    Transition transition;
+
+    int remainingEnergy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +79,29 @@ public class Battle extends AppCompatActivity {
         userPrimary = (ImageView) findViewById(R.id.user_primary);
         userSecondary = (ImageView) findViewById(R.id.user_secondary);
         userTertiary = (ImageView) findViewById(R.id.user_tertiary);
+        laser1 = findViewById(R.id.img_laser_1);
+        laser2 = findViewById(R.id.img_laser_2);
+
+        btnFire = findViewById(R.id.btn_fire);
+
+        container = (ConstraintLayout) findViewById(R.id.battle_scene);
+        set = new TransitionSet();
+        transition = new ChangeBounds();
+        transition.addTarget(userEnergybar);
+        set.addTransition(transition);
+        transition = new ChangeBounds();
+        transition.addTarget(oppHealthbar).setStartDelay(200);
+        set.addTransition(transition);
+        transition = new ChangeBounds();
+        transition.addTarget(laser1);
+        set.addTransition(transition);
+        transition = new ChangeBounds();
+        transition.addTarget(laser2);
+        set.addTransition(transition);
+        ImageView explosion = findViewById(R.id.img_explosion);
+        transition = new ChangeBounds();
+        transition.addTarget(explosion).setStartDelay(200);
+        set.addTransition(transition);
 
         requestQueue = Volley.newRequestQueue(this);
 
@@ -107,6 +140,13 @@ public class Battle extends AppCompatActivity {
 
     private void setupBattleScreen() {
         try {
+            remainingEnergy = userData.getInt("energy");
+            if(remainingEnergy < 10){
+                TextView msg = findViewById(R.id.msg_no_energy);
+                btnFire.setVisibility(View.INVISIBLE);
+                msg.setVisibility(View.VISIBLE);
+            }
+
             oppUsername.setText(battleData.getString("opp_id"));
             oppLevel.setText("Level " + battleData.getInt("opp_level"));
             ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) oppHealthbar.getLayoutParams();
@@ -148,9 +188,21 @@ public class Battle extends AppCompatActivity {
 
     public void fireLaser(View view) {
         try {
+            if(remainingEnergy < 10)
+                return;
+
             String[] keys = {"user_id", "opp_id"};
             String[] values = {userData.getString("user_id"), battleData.getString("opp_id")};
             JSONObject data = utils.createJSONObj(keys, values);
+
+            TransitionManager.endTransitions(container);
+
+            ConstraintLayout.LayoutParams paramsLaser1 = (ConstraintLayout.LayoutParams) laser1.getLayoutParams();
+            paramsLaser1.topMargin = getResources().getDimensionPixelSize(R.dimen.laser_top_top_margin);
+            laser1.setLayoutParams(paramsLaser1);
+            ConstraintLayout.LayoutParams paramsLaser2 = (ConstraintLayout.LayoutParams) laser2.getLayoutParams();
+            paramsLaser2.topMargin = getResources().getDimensionPixelSize(R.dimen.laser_top_top_margin);
+            laser2.setLayoutParams(paramsLaser2);
 
             String url = utils.URL + "fire_laser";
             JsonObjectRequest req = new JsonObjectRequest(url, data,
@@ -158,34 +210,24 @@ public class Battle extends AppCompatActivity {
                         @Override
                         public void onResponse(JSONObject response) {
                             try {
-                                ImageView laser1 = findViewById(R.id.img_laser_1);
-                                ImageView laser2 = findViewById(R.id.img_laser_2);
-
-                                ConstraintLayout container = (ConstraintLayout) findViewById(R.id.battle_scene);
-                                TransitionSet set = new TransitionSet();
-                                Transition energyTransition = new ChangeBounds();
-                                Transition laserTransition1 = new ChangeBounds();
-                                Transition laserTransition2 = new ChangeBounds();
-                                Transition healthTransition = new ChangeBounds();
-                                energyTransition.addTarget(userEnergybar);
-                                laserTransition1.addTarget(laser1);
-                                laserTransition2.addTarget(laser2);
-                                healthTransition.setStartDelay(500).addTarget(oppHealthbar);
-
-                                set.addTransition(energyTransition).addTransition(healthTransition);
-
                                 TransitionManager.beginDelayedTransition(container, set);
 
-                                // TODO: animate lasers, energy decrease and lasers at same time, delay and then change health bar
-
                                 int remainingHp = response.getInt("remaining_hp");
+                                if(response.getBoolean("won_battle"))
+                                    remainingHp = 0;
+
                                 ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) oppHealthbar.getLayoutParams();
                                 params.width = (int) remainingHp * getResources().getDimensionPixelSize(R.dimen.bar_size) / 100;
                                 if(remainingHp == 0)
                                     params.width = getResources().getDimensionPixelSize(R.dimen.empty_bar_size);
                                 oppHealthbar.setLayoutParams(params);
 
-                                int remainingEnergy = response.getInt("remaining_energy");
+                                remainingEnergy = response.getInt("remaining_energy");
+                                if(remainingEnergy < 10){
+                                    TextView msg = findViewById(R.id.msg_no_energy);
+                                    btnFire.setVisibility(View.INVISIBLE);
+                                    msg.setVisibility(View.VISIBLE);
+                                }
                                 params = (ConstraintLayout.LayoutParams) userEnergybar.getLayoutParams();
                                 params.width = (int) remainingEnergy * getResources().getDimensionPixelSize(R.dimen.bar_size) / 100;
                                 if(remainingEnergy == 0)
@@ -194,9 +236,23 @@ public class Battle extends AppCompatActivity {
                                     params.width = getResources().getDimensionPixelSize(R.dimen.bar_size);
                                 userEnergybar.setLayoutParams(params);
 
+                                ConstraintLayout.LayoutParams paramsLaser1 = (ConstraintLayout.LayoutParams) laser1.getLayoutParams();
+                                paramsLaser1.topMargin = getResources().getDimensionPixelSize(R.dimen.laser_top_margin);
+                                laser1.setLayoutParams(paramsLaser1);
+                                ConstraintLayout.LayoutParams paramsLaser2 = (ConstraintLayout.LayoutParams) laser2.getLayoutParams();
+                                paramsLaser2.topMargin = getResources().getDimensionPixelSize(R.dimen.laser_top_margin);
+                                laser2.setLayoutParams(paramsLaser2);
+
                                 if(response.getBoolean("won_battle")) {
-                                    Button btnFire = (Button) findViewById(R.id.btn_fire);
-                                    btnFire.setText("Won Battle!");
+                                    ImageView explosion = findViewById(R.id.img_explosion);
+                                    ConstraintLayout.LayoutParams layout = (ConstraintLayout.LayoutParams) explosion.getLayoutParams();
+                                    layout.width = ConstraintLayout.LayoutParams.WRAP_CONTENT;
+                                    layout.height = ConstraintLayout.LayoutParams.WRAP_CONTENT;
+                                    explosion.setLayoutParams(layout);
+
+                                    btnFire.setVisibility(View.INVISIBLE);
+                                    TextView msg = findViewById(R.id.msg_victory);
+                                    msg.setVisibility(View.VISIBLE);
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -214,5 +270,9 @@ public class Battle extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public void goToLobby(View view) {
+        finish();
     }
 }

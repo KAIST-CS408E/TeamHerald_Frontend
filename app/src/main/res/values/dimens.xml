@@ -9,4 +9,7 @@
     <dimen name="friend_spaceship_size">80dp</dimen>
     <dimen name="img_friend_spaceship_left">16dp</dimen>
     <dimen name="img_friend_spaceship_top">8dp</dimen>
+    <dimen name="laser_top_margin">200dp</dimen>
+    <dimen name="laser_top_top_margin">400dp</dimen>
+    <dimen name="laser_side_margin">5dp</dimen>
 </resources>

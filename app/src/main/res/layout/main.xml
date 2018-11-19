@@ -44,6 +44,7 @@
         app:layout_constraintEnd_toStartOf="@+id/button4" />
 
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/lobby_rest_screen"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -114,7 +115,6 @@
 
         <Button
             android:id="@+id/btn_battle"
-            android:background="@drawable/roundedbutton"
             android:layout_width="120dp"
             android:layout_height="48dp"
             android:layout_marginStart="8dp"
@@ -123,12 +123,13 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginBottom="10dp"
+            android:background="@drawable/roundedbutton"
             android:onClick="goToOrStartBattle"
             android:stateListAnimator="@null"
             android:text="@string/new_battle"
+            app:layout_constraintBottom_toTopOf="@+id/energy_bar"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/energy_bar" />
+            app:layout_constraintStart_toStartOf="parent" />
 
 
         <ImageView
@@ -145,14 +146,12 @@
             android:id="@+id/textView14"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
             android:text="@string/wins"
             android:textColor="@android:color/background_light"
             android:textSize="20sp"
-            app:layout_constraintEnd_toStartOf="@+id/textView11"
-            app:layout_constraintTop_toBottomOf="@+id/text_wins" />
+            app:layout_constraintBottom_toBottomOf="@+id/textView11"
+            app:layout_constraintEnd_toStartOf="@+id/textView11" />
 
         <TextView
             android:id="@+id/text_losses"
@@ -232,13 +231,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
             android:text="@string/losses"
             android:textColor="@android:color/background_light"
             android:textSize="20sp"
-            app:layout_constraintStart_toEndOf="@+id/textView11"
-            app:layout_constraintTop_toBottomOf="@+id/text_losses" />
+            app:layout_constraintBottom_toBottomOf="@+id/textView11"
+            app:layout_constraintStart_toEndOf="@+id/textView11" />
 
         <ImageView
             android:id="@+id/img_spaceship_primary"
