@@ -246,6 +246,7 @@
         android:layout_height="0dp"
         android:layout_marginStart="420dp"
         android:background="@drawable/scrollable_friend_tab"
+        app:layout_constraintBottom_toTopOf="@+id/history_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_friends_list">
 

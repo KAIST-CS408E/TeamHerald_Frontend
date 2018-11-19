@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -50,7 +49,6 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 import org.json.JSONObject;
 import org.json.JSONException;
 import org.json.JSONArray;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;

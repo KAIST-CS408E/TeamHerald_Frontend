@@ -1,21 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id = "@+id/relative_layout"
+    android:id="@+id/constraint3"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="16dp"
-    android:paddingTop = "16dp"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
+    android:background="@drawable/background"
+    android:paddingLeft="0dp"
+    android:paddingTop="0dp"
+    android:paddingRight="0dp"
+    android:paddingBottom="0dp"
     tools:context=".BikeSessions">
 
-    <android.support.v7.widget.RecyclerView
-        android:id = "@+id/recycler_view"
-        android:layout_width = "match_parent"
-        android:layout_height = "match_parent"
-        />
+    <RelativeLayout
+        android:id="@+id/relative_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="64dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-</RelativeLayout>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="0dp">
+
+        </android.support.v7.widget.RecyclerView>
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/history_button2"
+        android:layout_width="0dp"
+        android:layout_height="58dp"
+        android:background="@drawable/menu_bar_selected"
+        android:stateListAnimator="@null"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/main_button" />
+
+    <Button
+        android:id="@+id/achievements_button"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:background="@drawable/bottom_bar_unselected"
+        android:stateListAnimator="@null"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/main_button"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView20"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/history_button2"
+        app:layout_constraintEnd_toEndOf="@+id/history_button2"
+        app:layout_constraintStart_toEndOf="@+id/main_button"
+        app:layout_constraintTop_toTopOf="@+id/history_button2"
+        app:srcCompat="@drawable/history_menu" />
+
+    <Button
+        android:id="@+id/main_button"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:background="@drawable/bottom_bar_unselected_side"
+        android:onClick="goToMain"
+        android:stateListAnimator="@null"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/history_button2"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/achievements_button" />
+
+    <ImageView
+        android:id="@+id/imageView19"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        app:layout_constraintBottom_toBottomOf="@+id/main_button"
+        app:layout_constraintEnd_toEndOf="@+id/main_button"
+        app:layout_constraintStart_toStartOf="@+id/main_button"
+        app:layout_constraintTop_toTopOf="@+id/main_button"
+        app:srcCompat="@drawable/spaceship_menu" />
+
+    <ImageView
+        android:id="@+id/imageView18"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/achievements_button"
+        app:layout_constraintEnd_toStartOf="@+id/main_button"
+        app:layout_constraintStart_toStartOf="@+id/achievements_button"
+        app:layout_constraintTop_toTopOf="@+id/achievements_button"
+        app:srcCompat="@drawable/badgemenu" />
+
+</android.support.constraint.ConstraintLayout>
