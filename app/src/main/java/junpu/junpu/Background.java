@@ -51,8 +51,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.ActivityRecognitionClient;
 import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -428,14 +426,28 @@ public class Background extends Service implements LocationListener, GoogleApiCl
         //Make json object
         JSONObject session = new JSONObject();
         JSONArray penaltyArray = new JSONArray();
+
         if(phoneViolation){
             penaltyArray.put("phone");
         }
+        if(speeding){
+            penaltyArray.put("speed");
+        }
+        if(rainBiking){
+            penaltyArray.put("weather");
+        }
+        if(intersectionSpeeding){
+            penaltyArray.put("intersection");
+        }
+        if(wrongLane){
+            penaltyArray.put("lane");
+        }
+
         try {
             session.put("android_id", "8f5b7333cca13357");
             session.put("duration", durationSeconds);
             session.put("distance", totalDistance);
-            session.put("phone", penaltyArray);
+            session.put("penalty", penaltyArray);
         } catch (JSONException e) {
             e.printStackTrace();
         }
