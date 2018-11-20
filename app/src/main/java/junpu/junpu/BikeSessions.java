@@ -25,6 +25,8 @@ public class BikeSessions extends AppCompatActivity{
 
     RecyclerView recyclerView;
 
+    JSONObject data;
+
     @Override
     protected void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
@@ -39,10 +41,10 @@ public class BikeSessions extends AppCompatActivity{
         Log.e("TAG", "bike sessions started");
 
         Intent intent = getIntent();
-        String jsonArray = intent.getStringExtra("DATA");
         JSONArray array = null;
         try {
-            array = new JSONArray(jsonArray);
+            data = new JSONObject(intent.getStringExtra("DATA"));
+            array = data.getJSONArray("sessions");
             System.out.println(array.toString(2));
         } catch (JSONException e) {
             e.printStackTrace();
@@ -161,5 +163,14 @@ public class BikeSessions extends AppCompatActivity{
 
     public void goToMain(View view){
         finish();
+        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+    }
+
+    public void goToAchievementsFromHistory(View view) {
+        Intent intent = new Intent(getApplicationContext(), Achievements.class);
+        intent.putExtra("DATA", data.toString());
+        finish();
+        startActivity(intent);
+        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
     }
 }

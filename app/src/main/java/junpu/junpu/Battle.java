@@ -274,5 +274,6 @@ public class Battle extends AppCompatActivity {
 
     public void goToLobby(View view) {
         finish();
+        overridePendingTransition(R.anim.slide_in_top, R.anim.slide_out_bottom);
     }
 }

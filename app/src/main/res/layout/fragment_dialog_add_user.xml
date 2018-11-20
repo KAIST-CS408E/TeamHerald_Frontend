@@ -1,32 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@drawable/popup_background"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
+        android:gravity="center_horizontal"
         android:paddingLeft="16dp"
-        android:paddingTop="8dp"
+        android:paddingTop="16dp"
         android:paddingRight="16dp"
         android:paddingBottom="8dp"
         android:text="Enter Friend ID"
-        android:textColor="@android:color/background_light"
-        android:textSize="25sp" />
+        android:textColor="@color/button_outline"
+        android:textSize="28sp"
+        android:textStyle="bold" />
 
     <EditText
         android:id="@+id/friend_username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="4dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="16dp"
+        android:background="@color/cardview_light_background"
         android:hint="Friend ID"
         android:inputType="textEmailAddress"
+        android:paddingLeft="16dp"
+        android:paddingTop="8dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="8dp"
         android:textSize="23sp" />
 
     <TextView
@@ -34,6 +40,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:textColor="@android:color/holo_red_dark"
-        android:textSize="16sp" />
+        android:textColor="@color/button_outline"
+        android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/btn_submit_friend"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/roundedbutton"
+        android:stateListAnimator="@null"
+        android:text="Submit"
+        android:textColor="@color/button_outline"
+        android:textSize="20sp" />
 </LinearLayout>

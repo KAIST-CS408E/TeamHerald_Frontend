@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -97,8 +99,9 @@ public class Lobby extends AppCompatActivity {
                 Log.e("TAG", "calling bike sesions");
 
                 Intent intent = new Intent(getApplicationContext(), BikeSessions.class);
-                intent.putExtra("DATA", sessions.toString());
+                intent.putExtra("DATA", "{user_data: " + userData.toString() + ", sessions: " + sessions.toString() + "}");
                 startActivity(intent);
+                overridePendingTransition(R.anim.fadein, R.anim.fadeout);
             }
         });
 
@@ -110,8 +113,9 @@ public class Lobby extends AppCompatActivity {
                 Log.e("TAG", "calling achievements");
 
                 Intent intent = new Intent(getApplicationContext(), Achievements.class);
-//                intent.putExtra("DATA", sessions.toString());
+                intent.putExtra("DATA", "{user_data: " + userData.toString() + ", sessions: " + sessions.toString() + "}");
                 startActivity(intent);
+                overridePendingTransition(R.anim.fadein, R.anim.fadeout);
             }
         });
 
@@ -120,29 +124,19 @@ public class Lobby extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
 
-        builder.setView(inflater.inflate(R.layout.fragment_dialog_add_user, null))
-                .setPositiveButton("Submit", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-
-                    }
-                });
+        builder.setView(inflater.inflate(R.layout.fragment_dialog_add_user, null));
 
         addFriendDialog = builder.create();
+        addFriendDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         // Create dialog screen for starting battle
         builder = new AlertDialog.Builder(this);
         inflater = this.getLayoutInflater();
 
-        builder.setView(inflater.inflate(R.layout.dialog_start_battle, null))
-                .setPositiveButton("Battle!", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-
-                    }
-                });
+        builder.setView(inflater.inflate(R.layout.dialog_start_battle, null));
 
         startBattleDialog = builder.create();
+        startBattleDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         checkConnectionAndStartService();
     }
@@ -328,7 +322,7 @@ public class Lobby extends AppCompatActivity {
     public void showFriendDialog(View view) {
         addFriendDialog.show();
 
-        addFriendDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener()
+        addFriendDialog.findViewById(R.id.btn_submit_friend).setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v) {
@@ -441,6 +435,7 @@ public class Lobby extends AppCompatActivity {
                 Intent intent = new Intent(this, Battle.class);
                 intent.putExtra("junpu.junpu.USERDATA", userData.toString());
                 startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_bottom, R.anim.slide_out_top);
             } else {
                 startBattleDialog.show();
 
@@ -458,7 +453,7 @@ public class Lobby extends AppCompatActivity {
                 Spinner chooseFriendSpinner = (Spinner) dialogView.findViewById(R.id.choose_friend);
                 chooseFriendSpinner.setAdapter(dataAdapter);
 
-                startBattleDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener()
+                startBattleDialog.findViewById(R.id.btn_choose_battle).setOnClickListener(new View.OnClickListener()
                 {
                     @Override
                     public void onClick(View v) {
@@ -482,6 +477,7 @@ public class Lobby extends AppCompatActivity {
                                                     Intent intent = new Intent(Lobby.this, Battle.class);
                                                     intent.putExtra("junpu.junpu.USERDATA", userData.toString());
                                                     startActivity(intent);
+                                                    overridePendingTransition(R.anim.slide_in_bottom, R.anim.slide_out_top);
                                                 }
                                             } catch (JSONException e) {
                                                 e.printStackTrace();
