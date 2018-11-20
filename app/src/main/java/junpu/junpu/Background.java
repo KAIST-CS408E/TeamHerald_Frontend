@@ -106,6 +106,7 @@ public class Background extends Service implements LocationListener, GoogleApiCl
     final int normalspeed = 4;
     final float rainspeedmultiplier = 0.4f;
     final float intersectionspeedmultiplier = 0.75f;
+    final float threshold = 0.0003f;
 
     // Keeping track of previous locations
     double prevlat, prevlong;
@@ -118,6 +119,7 @@ public class Background extends Service implements LocationListener, GoogleApiCl
     // state checking
     public STATE state = STATE.NOT_BIKING;
     public int atIntersection = 0;
+    public int wrongLaneCount = 0;
     public int raining = 0;
 
     //violations
@@ -275,8 +277,8 @@ public class Background extends Service implements LocationListener, GoogleApiCl
                                 // we inside a road bois
                                 Log.e("TAG","ON A ROAD!");
                                 inRoad = true;
-                                if (prevlat > 0.0d) {
-                                    if (latitude - prevlat > 0) {
+                                if (prevlat > 0.0d + threshold) {
+                                    if (latitude - prevlat > 0 + threshold) {
                                         whichWayDriving = "R";
                                     } else {
                                         whichWayDriving = "L";
@@ -292,7 +294,7 @@ public class Background extends Service implements LocationListener, GoogleApiCl
                                 Log.e("TAG","ON A ROAD!");
                                 inRoad = true;
                                 if (prevlat > 0.0d) {
-                                    if (latitude - prevlat > 0) {
+                                    if (latitude - prevlat > 0 + threshold) {
                                         whichWayDriving = "R";
                                     } else {
                                         whichWayDriving = "L";
@@ -308,7 +310,7 @@ public class Background extends Service implements LocationListener, GoogleApiCl
                                 Log.e("TAG","ON A ROAD!");
                                 inRoad = true;
                                 if (prevlong > 0.0d) {
-                                    if (longitude - prevlong > 0) {
+                                    if (longitude - prevlong > 0 + threshold) {
                                         whichWayDriving = "R";
                                     } else {
                                         whichWayDriving = "L";
@@ -323,7 +325,7 @@ public class Background extends Service implements LocationListener, GoogleApiCl
                                 Log.e("TAG","ON A ROAD!");
                                 inRoad = true;
                                 if (prevlong > 0.0d) {
-                                    if (longitude - prevlong > 0) {
+                                    if (longitude - prevlong > 0 + threshold) {
                                         whichWayDriving = "R";
                                     } else {
                                         whichWayDriving = "L";
@@ -349,6 +351,7 @@ public class Background extends Service implements LocationListener, GoogleApiCl
                         Log.e("TAG","CHECKING WRONG LANE?!?!?!");
                         if (whichWayDriving != null && !whichSideOfRoad.equals(whichWayDriving)) {
                             wrongLane = true;
+                            wrongLaneCount++;
                             Log.e("TAG","WRONG LANE MOTHER FUCKER");
                         }
                         break;
@@ -424,6 +427,7 @@ public class Background extends Service implements LocationListener, GoogleApiCl
         raining = 0;
         prevlat = 0;
         prevlong = 0;
+        wrongLaneCount = 0;
         startTime = Calendar.getInstance().getTimeInMillis();
     }
 
@@ -454,6 +458,7 @@ public class Background extends Service implements LocationListener, GoogleApiCl
         JSONArray penaltyArray = new JSONArray();
 
         Log.d("TAG", "Penalties: " + phoneViolation + speeding + rainBiking + intersectionSpeeding + wrongLane);
+        Log.d("TAG", "Wrong Lane count!: " + wrongLaneCount);
 
         if(phoneViolation){
             penaltyArray.put("phone");
