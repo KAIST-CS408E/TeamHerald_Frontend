@@ -58,7 +58,7 @@ public class Achievements extends AppCompatActivity{
 
                     if(collected.contains(i))
                         view.setBackgroundResource(R.drawable.achievement_card_yes);
-
+                    
                     view.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
