@@ -3,7 +3,6 @@
     package="junpu.junpu">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
@@ -22,7 +21,7 @@
 
         <meta-data
             android:name="com.google.android.awareness.API_KEY"
-            android:value="AIzaSyDv_fTFz-aPyNzxYeDqjbqyCNVg6jpD8Wo"/>
+            android:value="AIzaSyDv_fTFz-aPyNzxYeDqjbqyCNVg6jpD8Wo" />
 
         <activity android:name=".Main">
             <intent-filter>
@@ -35,12 +34,13 @@
             android:name=".CustomizeShip"
             android:parentActivityName=".Main" />
         <activity android:name=".Battle" />
-        <activity android:name=".Lobby"></activity>
-        <activity android:name=".BikeSessions"></activity>
-        <activity android:name=".Achievements"></activity>
+        <activity android:name=".Lobby" />
+        <activity android:name=".BikeSessions" />
+        <activity android:name=".Achievements" />
 
-        <service android:name=".Background"
-            android:stopWithTask="false"/>
+        <service
+            android:name=".Background"
+            android:stopWithTask="false" />
 
         <receiver android:name=".PhoneUnlockedReceiver"/>
 

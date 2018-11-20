@@ -16,8 +16,10 @@ public class Constants {
             "Second intersection into Galilei carpark,36.366375,127.359408",
             "Intersection into back of E2,36.366557,127.364939",
             "Intersection from E2 to the road to Main Gate,36.366957,127.365559",
+            "Crossing from W1 to KI,36.367070,127.362725",
             "Intersection to Nano Fab,36.367512,127.36676",
             "Intersection in front of Heemang,36.367911,127.356409",
+            "Duck Pond,36.368064,127.362128",
             "Intersection to behind Heemang,36.368607,127.355952",
             "Zebra crossing to Dunkin,36.36863,127.364238",
             "Intersection on the road in front of Dunkin,36.368727,127.364374",
@@ -37,7 +39,7 @@ public class Constants {
             "Third intersection of carpark,36.370783,127.355254",
             "Intersection on the road of Creative Admin B/D and W8 (nearest to Creative),36.370827,127.362524",
             "First Intersection at bottom of Taxi Stand,36.370855,127.359507",
-            "Zebra crossing from Sports Complex to road towards Creative ,36.371314,127.360726",
+            "Zebra crossing from Sports Complex to road towards Creative,36.371314,127.360726",
             "Intersection in front of carpark in Endless Road,36.371424,127.356201",
             "Second intersection of carpark,36.37144,127.355533",
             "The dangerous shortcut thing at the crossing,36.371512,127.36104",
@@ -50,9 +52,12 @@ public class Constants {
             "Intersection from Taxi Stand to ME B/D,36.372971,127.359558",
             "Intersection to President's House,36.373017,127.364912",
             "Intersection on top of Taxi Stand,36.373395,127.359555",
+            "Second entrance to Areum,36.373420,127.357185",
             "Intersection between Sarang and Kaimaru,36.373425,127.358853",
+            "First entrance to Areum,36.373425,127.356699",
             "First intersection from East Gate (in front of N1),36.373438,127.365388",
             "The 5-way intersection between N10 and N4,36.373455,127.361033",
+            "Seongsil,36.374051,127.358905",
             "Intersection into Jilli,36.3742155,127.359494",
             "Intersection between N10 and the building with Hubo,36.37444,127.361036",
             "Intersection into Silloe,36.374482,127.359876",
@@ -68,10 +73,10 @@ public class Constants {
     // horizontal roads must have matching longitudes. vertical roads must have matching latitudes.
     // if there is a right angle within the area, the area must be a rectangle.
     static final String[] roads_string = new String[] {
-            "North Dorm road,36.373458,127.359421,36.373478,127.356279,36.373380,127.359421,36.373385,127.356279,H",
-            "N1 road,36.374468,127.363939,36.374480,127.361155,36.374403,127.363939,36.374401,127.361155,H",
+            "North Dorm road,36.373457,127.358735,36.373454,127.357288,36.373390,127.358735,36.373389,127.357288,H",
+            "N1 road,36.374472,127.362880,36.374474,127.361155,36.374408,127.362880,36.374411,127.361155,H",
             "Sarang/KAIMARU,36.373945,127.358830,36.373540,127.358800,36.373945,127.358910,36.373540,127.358893,V",
-            "Behind CB,36.374500,127.360890,36.374533,127.359914,36.374405,127.360890,36.374437,127.359914,H",
+            "Behind CB,36.374500,127.360890,36.374511,127.359980,36.374405,127.360890,36.374448,127.359980,H",
             "Lotteria road,36.373510,127.360920,36.373510,127.359925,36.373420,127.360920,36.373420,127.359925,H"
     };
     public  Constants(){

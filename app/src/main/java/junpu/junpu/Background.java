@@ -8,12 +8,12 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -32,10 +32,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
-import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -48,8 +46,11 @@ import com.google.android.gms.awareness.state.Weather;
 import com.google.android.gms.awareness.snapshot.WeatherResponse;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.ActivityRecognitionClient;
-import com.google.android.gms.location.ActivityRecognitionResult;
+import com.google.android.gms.location.ActivityRecognition;
+import com.google.android.gms.location.ActivityTransition;
+import com.google.android.gms.location.ActivityTransitionEvent;
+import com.google.android.gms.location.ActivityTransitionRequest;
+import com.google.android.gms.location.ActivityTransitionResult;
 import com.google.android.gms.location.DetectedActivity;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
@@ -75,10 +76,13 @@ public class Background extends Service implements LocationListener, GoogleApiCl
     GoogleApiClient mGoogleApiClient;
     Location mCurrentLocation= null, lStart = null, lEnd=null;
 
-    //Activity Recognition stuff
-    private Intent mIntentService;
+    //Transition stuff
+    List<ActivityTransition> transitions = new ArrayList<>();
+    ActivityTransitionRequest request = null;
     private PendingIntent mPendingIntent;
-    private ActivityRecognitionClient mActivityRecognitionClient;
+    private TransitionsReceiver mTransitionsReceiver;
+    private final String TRANSITIONS_RECEIVER_ACTION =
+            BuildConfig.APPLICATION_ID + "TRANSITIONS_RECEIVER_ACTION";
 
     //Phone unlock/lock
     private PhoneUnlockedReceiver mUnlockReceiver;
@@ -99,9 +103,9 @@ public class Background extends Service implements LocationListener, GoogleApiCl
     List<List<String>> roads;
 
     // Constants/multipliers for weather conditions
-    final int normalspeed = 7;
+    final int normalspeed = 4;
     final float rainspeedmultiplier = 0.4f;
-    final float intersectionspeedmultiplier = 0.6f;
+    final float intersectionspeedmultiplier = 0.75f;
 
     // Keeping track of previous locations
     double prevlat, prevlong;
@@ -130,7 +134,45 @@ public class Background extends Service implements LocationListener, GoogleApiCl
         super.onCreate();
 //        Log.d("TAG", "Service: onCreate");
 
+        Intent intent = new Intent(TRANSITIONS_RECEIVER_ACTION);
+        mPendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+
+        mTransitionsReceiver = new TransitionsReceiver();
+        registerReceiver(mTransitionsReceiver, new IntentFilter(TRANSITIONS_RECEIVER_ACTION));
+
         // create the lists
+        transitions.add(
+                new ActivityTransition.Builder()
+                        .setActivityType(DetectedActivity.ON_BICYCLE)
+                        .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
+                        .build());
+
+        transitions.add(
+                new ActivityTransition.Builder()
+                        .setActivityType(DetectedActivity.ON_BICYCLE)
+                        .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_EXIT)
+                        .build());
+
+        request = new ActivityTransitionRequest(transitions);
+
+        Task<Void> task =
+                ActivityRecognition.getClient(this)
+                        .requestActivityTransitionUpdates(request, mPendingIntent);
+        task.addOnSuccessListener(
+                new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void result) {
+                        Log.i("TAG", "Transitions Api was successfully registered.");
+                    }
+                });
+        task.addOnFailureListener(
+                new OnFailureListener() {
+                    @Override
+                    public void onFailure(Exception e) {
+                        Log.e("TAG", "Transitions Api could not be registered: " + e);
+                    }
+                });
+
         intersections = new ArrayList<List<String>>();
 
         for(String line : Constants.intersections_string)
@@ -171,28 +213,12 @@ public class Background extends Service implements LocationListener, GoogleApiCl
         filter.addAction(Intent.ACTION_USER_PRESENT);
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         registerReceiver(mUnlockReceiver, filter);
-
-        //set up activity recognition
-        mActivityRecognitionClient = new ActivityRecognitionClient(this);
-        mIntentService = new Intent(this, Background.class);
-        mIntentService.putExtra("KEY","ACTIVITY");
-        mPendingIntent = PendingIntent.getService(this, 1, mIntentService, PendingIntent.FLAG_UPDATE_CURRENT);
-        requestActivities();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId){
         super.onStartCommand(intent,flags,startId);
 //        Log.d("TAG", "Service: onStartCommand");
-
-
-        //An activity has arrived
-        if(intent != null){//if since android OS calls onstart when app quits.
-            String key = intent.getStringExtra("KEY");
-            if(key.contentEquals("ACTIVITY")){
-                handleActivity(intent);
-            }
-        }
         return START_STICKY;
     }
 
@@ -203,7 +229,7 @@ public class Background extends Service implements LocationListener, GoogleApiCl
             Log.e("TAG","Invalid location update(no connection)");
 
             //Destroy the service itself
-            stopSelf();
+            //stopSelf();
         }
         else{
             Log.e("TAG", "Valid location update");
@@ -221,7 +247,6 @@ public class Background extends Service implements LocationListener, GoogleApiCl
             Log.e("TAG", "Total distance: "+String.valueOf(totalDistance));
 
             if (state == STATE.BIKING) {
-                Log.e("TAG","I'M BIKING!");
                 double latitude = location.getLatitude();
                 double longitude = location.getLongitude();
                 float speed = location.getSpeed();
@@ -357,10 +382,11 @@ public class Background extends Service implements LocationListener, GoogleApiCl
 
                 // speed checking
                 float speedLimit = normalspeed*(rainspeedmultiplier+(1-rainspeedmultiplier)*(1-raining))*(intersectionspeedmultiplier+(1-intersectionspeedmultiplier)*(1-atIntersection));
-                Log.e("TAG","AM I HERE?!?!?");
                 if (speedLimit < speed) {
-                    Log.e("TAG","I AM SPEEDING!");
-                    speeding = true;
+                    Log.e("TAG","I AM SPEEDING: " + speed + speedLimit);
+                    if (speed > normalspeed) {
+                        speeding = true;
+                    }
                     if (atIntersection == 1) {
                         intersectionSpeeding = true;
                     }
@@ -372,7 +398,7 @@ public class Background extends Service implements LocationListener, GoogleApiCl
         }
     }
 
-    //initalise violations and information.(States are not handled here)
+    //initialize violations and information.(States are not handled here)
     private void beginBikeSession(){
 
         /* Connect to Google API */
@@ -427,6 +453,8 @@ public class Background extends Service implements LocationListener, GoogleApiCl
         JSONObject session = new JSONObject();
         JSONArray penaltyArray = new JSONArray();
 
+        Log.d("TAG", "Penalties: " + phoneViolation + speeding + rainBiking + intersectionSpeeding + wrongLane);
+
         if(phoneViolation){
             penaltyArray.put("phone");
         }
@@ -463,7 +491,7 @@ public class Background extends Service implements LocationListener, GoogleApiCl
                     public void onResponse(JSONObject response) {
                         try {
                             if(response.getBoolean("success")){
-                                Log.e("TAG", "JSON RESPONSE SUCESS");
+                                Log.e("TAG", "JSON RESPONSE SUCCESS");
                             }else{
                                 Log.e("TAG", "JSON RESPONSE FAIL");
                             }
@@ -483,128 +511,77 @@ public class Background extends Service implements LocationListener, GoogleApiCl
         queue.add(req);
     }
 
+    /**
+     * A basic BroadcastReceiver to handle intents from from the Transitions API.
+     */
+    public class TransitionsReceiver extends BroadcastReceiver {
 
-    private void handleActivity(Intent intent){
-        Calendar cal2;
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(Background.this);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        cal2 = Calendar.getInstance();
-        int tempday = cal2.get(Calendar.DAY_OF_MONTH);
-        if (currentday == 0) {
-            currentday = tempday;
-        } else if (currentday != tempday){
-            if (tempday - currentday == 1) {
-                currentday = tempday;
-                if (todayRain != null) {
-                    editor.putBoolean("rain", todayRain);
-                    todayRain = null;
-                    editor.apply();
-                }
-            } else {
-                editor.remove("rain");
-                editor.apply();
-                todayRain = null;
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (!TextUtils.equals(TRANSITIONS_RECEIVER_ACTION, intent.getAction())) {
+                Log.e("TAG", "received something weird af");
+                return;
             }
-        }
-
-        getWeatherSnapshot();
-
-        if (condition != null) {
-            if (Arrays.asList(condition).contains(5) || Arrays.asList(condition).contains(6) || Arrays.asList(condition).contains(7) || Arrays.asList(condition).contains(8)) {
-                todayRain = true;
-            } else if (todayRain == null) {
-                todayRain = false;
-            }
-        }
-
-        boolean ytdrain = sharedPreferences.getBoolean("rain", false);
-        if (todayRain != null) {
-            if (ytdrain || todayRain) {
-                raining = 1;
-            }
-        } else {
-            if (ytdrain) {
-                raining = 1;
-            }
-        }
-
-//        Log.d("TAG", "Service: handleActivity");
-        ActivityRecognitionResult result = ActivityRecognitionResult.extractResult(intent);
-
-        ArrayList<DetectedActivity> detectedActivities = (ArrayList) result.getProbableActivities();
-        DetectedActivity mostProbable = null;
-        for (DetectedActivity activity : detectedActivities) {
-            if(mostProbable == null){
-                mostProbable = activity;
-            }
-
-            if(activity.getConfidence() >= mostProbable.getConfidence()){
-                mostProbable = activity;
-            }
-        }
-
-        if(mostProbable != null && mostProbable.getConfidence() >= 50){
-//            Log.e("TAG", "Detected activity: " + mostProbable.getType() + ", " + mostProbable.getConfidence());
-            int type = mostProbable.getType();
-            int confidence = mostProbable.getConfidence();
-
-
-            switch(type){
-                //relevant types
-                case DetectedActivity.ON_BICYCLE:{
-                    if(state != STATE.BIKING){
-                        beginBikeSession();
+            if (ActivityTransitionResult.hasResult(intent)) {
+                ActivityTransitionResult result = ActivityTransitionResult.extractResult(intent);
+                for (ActivityTransitionEvent event : result.getTransitionEvents()) {
+                    // per event
+                    Calendar cal2;
+                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(Background.this);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    cal2 = Calendar.getInstance();
+                    int tempday = cal2.get(Calendar.DAY_OF_MONTH);
+                    if (currentday == 0) {
+                        currentday = tempday;
+                    } else if (currentday != tempday){
+                        if (tempday - currentday == 1) {
+                            currentday = tempday;
+                            if (todayRain != null) {
+                                editor.putBoolean("rain", todayRain);
+                                todayRain = null;
+                                editor.apply();
+                            }
+                        } else {
+                            editor.remove("rain");
+                            editor.apply();
+                            todayRain = null;
+                        }
                     }
-                    state = STATE.BIKING;
-                    break;
-                }
-                case DetectedActivity.ON_FOOT:{
-                    if(state == STATE.BIKING){
-                        //bike session ended
-                        endBikeSession();
-                    }
-                    state = STATE.NOT_BIKING;
-                    break;
-                }
-                case DetectedActivity.STILL:{
-                    if(state == STATE.BIKING){
-                        //bike session ended
-                        endBikeSession();
-                    }
-                    state = STATE.NOT_BIKING;
-                    break;
-                }
-                case DetectedActivity.TILTING:{
-                    if(state == STATE.BIKING){
-                        //bike session ended
-                        endBikeSession();
-                    }
-                    state = STATE.NOT_BIKING;
-                    break;
-                }
-                case DetectedActivity.WALKING:{
-                    if(state == STATE.BIKING){
-                        //bike session ended
-                        endBikeSession();
-                    }
-                    state = STATE.NOT_BIKING;
-                    break;
-                }
 
-                //what to do with these?
-                case DetectedActivity.RUNNING:{
-                    break;
-                }
-                case DetectedActivity.IN_VEHICLE:{
-                    break;
-                }
-                case DetectedActivity.UNKNOWN:{
-                    break;
+                    getWeatherSnapshot();
+
+                    if (condition != null) {
+                        if (Arrays.asList(condition).contains(5) || Arrays.asList(condition).contains(6) || Arrays.asList(condition).contains(7) || Arrays.asList(condition).contains(8)) {
+                            todayRain = true;
+                        } else if (todayRain == null) {
+                            todayRain = false;
+                        }
+                    }
+
+                    boolean ytdrain = sharedPreferences.getBoolean("rain", false);
+                    if (todayRain != null) {
+                        if (ytdrain || todayRain) {
+                            raining = 1;
+                        }
+                    } else {
+                        if (ytdrain) {
+                            raining = 1;
+                        }
+                    }
+
+                    switch(event.getTransitionType()) {
+                        //relevant types
+                        case ActivityTransition.ACTIVITY_TRANSITION_ENTER:
+                            state = STATE.BIKING;
+                            beginBikeSession();
+                            break;
+                        case ActivityTransition.ACTIVITY_TRANSITION_EXIT:
+                            state = STATE.NOT_BIKING;
+                            endBikeSession();
+                            break;
+                    }
                 }
             }
-        }
-        else{
-            Log.e("TAG", "Confidence < 50");
         }
     }
 
@@ -619,33 +596,7 @@ public class Background extends Service implements LocationListener, GoogleApiCl
         mLocationRequest.setInterval(500);//1 second interval
         mLocationRequest.setFastestInterval(500);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-//        mLocationRequest.setSmallestDisplacement((float)0);
-    }
-
-    private void requestActivities() {
-        Task<Void> task = mActivityRecognitionClient.requestActivityUpdates(
-                Constants.DETECTION_INTERVAL_IN_MILLISECONDS,
-                mPendingIntent);
-
-        task.addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void result) {
-                Toast.makeText(getApplicationContext(),
-                        "Successfully requested activity updates",
-                        Toast.LENGTH_SHORT)
-                        .show();
-            }
-        });
-
-        task.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getApplicationContext(),
-                        "Requesting activity updates failed to start",
-                        Toast.LENGTH_SHORT)
-                        .show();
-            }
-        });
+        mLocationRequest.setSmallestDisplacement(1);
     }
 
     private void vibrate(){
