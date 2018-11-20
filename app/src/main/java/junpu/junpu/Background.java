@@ -23,6 +23,7 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
@@ -429,6 +430,12 @@ public class Background extends Service implements LocationListener, GoogleApiCl
         prevlong = 0;
         wrongLaneCount = 0;
         startTime = Calendar.getInstance().getTimeInMillis();
+
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        boolean isScreenOn = pm.isInteractive();
+        if(isScreenOn){
+            phoneViolation = true;
+        }
     }
 
     //check violations and send to server.
