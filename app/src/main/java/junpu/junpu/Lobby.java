@@ -167,7 +167,7 @@ public class Lobby extends AppCompatActivity {
                         // TODO: Handle Errors here
                     }
                 });
-
+        req.setShouldCache(false);
         requestQueue.add(req);
     }
 
@@ -425,6 +425,7 @@ public class Lobby extends AppCompatActivity {
                             // TODO: handle exception here
                         }
                     });
+            req.setShouldCache(false);
             requestQueue.add(req);
         } catch (JSONException e) {
             e.printStackTrace();
