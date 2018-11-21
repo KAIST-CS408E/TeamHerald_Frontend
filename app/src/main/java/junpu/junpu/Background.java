@@ -18,6 +18,9 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.location.Location;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.AudioPlaybackConfiguration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -71,6 +74,8 @@ import java.util.List;
 
 public class Background extends Service implements LocationListener, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, SensorEventListener {
+
+    AudioManager mAudioManager;
 
     //Location stuff
     LocationRequest mLocationRequest;
@@ -130,6 +135,7 @@ public class Background extends Service implements LocationListener, GoogleApiCl
     public boolean rainBiking = false;
     public boolean wrongLane = false;
     public long startTime;
+    public boolean musicViolation = false;
 
     @Override
     public void onCreate(){
@@ -218,6 +224,24 @@ public class Background extends Service implements LocationListener, GoogleApiCl
         registerReceiver(mUnlockReceiver, filter);
 
 
+        //audio manager
+        mAudioManager= (AudioManager)this.getSystemService(Context.AUDIO_SERVICE);
+        mAudioManager.registerAudioPlaybackCallback(new AudioManager.AudioPlaybackCallback() {
+                @Override
+                public void onPlaybackConfigChanged(List<AudioPlaybackConfiguration> configs) {
+                    super.onPlaybackConfigChanged(configs);
+                    for(AudioPlaybackConfiguration config: configs){
+                        AudioAttributes attribute = config.getAudioAttributes();
+                        if(attribute.getContentType() == AudioAttributes.CONTENT_TYPE_MUSIC){
+                            if(state == STATE.BIKING){
+                                musicViolation = true;
+                            }
+                        }
+                    }
+                }
+            },
+                null
+        );
     }
 
     @Override
@@ -421,6 +445,7 @@ public class Background extends Service implements LocationListener, GoogleApiCl
 
         //general stats
         totalDistance = 0;
+        musicViolation = false;
         phoneViolation = false;
         speeding = false;
         intersectionSpeeding = false;
@@ -433,10 +458,18 @@ public class Background extends Service implements LocationListener, GoogleApiCl
         wrongLaneCount = 0;
         startTime = Calendar.getInstance().getTimeInMillis();
 
+
+        //carry on phone violation
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         boolean isScreenOn = pm.isInteractive();
         if(isScreenOn){
             phoneViolation = true;
+        }
+
+        //carry on music violation
+        if(mAudioManager.isMusicActive())
+        {
+            musicViolation = true;
         }
     }
 
@@ -483,6 +516,9 @@ public class Background extends Service implements LocationListener, GoogleApiCl
         }
         if(wrongLane){
             penaltyArray.put("lane");
+        }
+        if(musicViolation){
+            penaltyArray.put("music");
         }
 
         try {
