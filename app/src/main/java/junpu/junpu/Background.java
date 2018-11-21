@@ -19,6 +19,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
@@ -55,6 +56,9 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.AudioPlaybackConfiguration;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -66,6 +70,8 @@ import java.util.Calendar;
 import java.util.List;
 
 public class Background extends Service {
+
+    AudioManager mAudioManager;
 
     // GPS stuff
     Location mCurrentLocation = null;
@@ -124,6 +130,7 @@ public class Background extends Service {
     public boolean rainBiking = false;
     public boolean wrongLane = false;
     public long startTime;
+    public boolean musicViolation = false;
 
     @Override
     public void onCreate(){
@@ -209,7 +216,25 @@ public class Background extends Service {
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_USER_PRESENT);
         filter.addAction(Intent.ACTION_SCREEN_OFF);
+        filter.addAction("android.intent.action.PHONE_STATE");
         registerReceiver(mUnlockReceiver, filter);
+
+        //audio manager
+        mAudioManager= (AudioManager)this.getSystemService(Context.AUDIO_SERVICE);
+        mAudioManager.registerAudioPlaybackCallback(new AudioManager.AudioPlaybackCallback() {
+            @Override
+            public void onPlaybackConfigChanged(List<AudioPlaybackConfiguration> configs) {
+                super.onPlaybackConfigChanged(configs);
+                for(AudioPlaybackConfiguration config: configs){
+                    AudioAttributes attribute = config.getAudioAttributes();
+                    if(attribute.getContentType() == AudioAttributes.CONTENT_TYPE_MUSIC){
+                        if(state == STATE.BIKING){
+                            musicViolation = true;
+                        }
+                    }
+                }
+            }
+        },null);
     }
 
     @Override
@@ -228,6 +253,7 @@ public class Background extends Service {
         //general stats
         totalDistance = 0;
         phoneViolation = false;
+        musicViolation = false;
         speeding = false;
         intersectionSpeeding = false;
         rainBiking = false;
@@ -239,6 +265,18 @@ public class Background extends Service {
         prevlong = 0;
         wrongLaneCount = 0;
         startTime = Calendar.getInstance().getTimeInMillis();
+
+        //carry on phone violation
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        boolean isScreenOn = pm.isInteractive();
+        if(isScreenOn){
+            phoneViolation = true;
+        }
+        //carry on music violation
+        if(mAudioManager.isMusicActive())
+        {
+            musicViolation = true;
+        }
 
         //GPS
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -506,6 +544,9 @@ public class Background extends Service {
         }
         if(wrongLaneCount < 50){
             penaltyArray.put("lane");
+        }
+        if(musicViolation){
+            penaltyArray.put("music");
         }
 
         try {
