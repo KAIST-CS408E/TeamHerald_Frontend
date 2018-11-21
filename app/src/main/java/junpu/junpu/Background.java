@@ -131,11 +131,10 @@ public class Background extends Service implements LocationListener, GoogleApiCl
     public boolean wrongLane = false;
     public long startTime;
 
-
     @Override
     public void onCreate(){
         super.onCreate();
-//        Log.d("TAG", "Service: onCreate");
+        Log.d("TAG", "Service: onCreate");
 
         Intent intent = new Intent(TRANSITIONS_RECEIVER_ACTION);
         mPendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
@@ -215,7 +214,10 @@ public class Background extends Service implements LocationListener, GoogleApiCl
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_USER_PRESENT);
         filter.addAction(Intent.ACTION_SCREEN_OFF);
+        filter.addAction("android.intent.action.PHONE_STATE");
         registerReceiver(mUnlockReceiver, filter);
+
+
     }
 
     @Override
