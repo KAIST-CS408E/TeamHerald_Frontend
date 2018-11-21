@@ -19,8 +19,13 @@ public class Child {
 
 
         this.points = "Points: " + points;
-        this.distance = "Distance: " + distance;
-        this.duration = "Duration: " + duration;
+        this.distance = "Distance: " + distance + " m";
+
+        int total = Integer.parseInt(duration);
+        String minutes = String.valueOf(total/60);
+        String seconds = String.valueOf(total%60);
+
+        this.duration = "Duration: " + minutes + " mins " + seconds + " secs";
 
         this.speedingCheck = speedingCheck;
         this.weatherCheck = weatherCheck;
