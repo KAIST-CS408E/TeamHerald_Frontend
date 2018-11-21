@@ -18,6 +18,6 @@ public class MyParentViewHolder extends ParentViewHolder {
         super(itemView);
 
         _textView = itemView.findViewById(R.id.sessionDate);
-        _imageButton = itemView.findViewById(R.id.expandArrow);
+//        _imageButton = itemView.findViewById(R.id.expandArrow);
     }
 }

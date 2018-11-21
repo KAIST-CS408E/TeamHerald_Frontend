@@ -13,7 +13,10 @@ public class Parent implements ParentObject {
     private String sessionDate;
 
     public Parent(String sessionDate){
-        this.sessionDate = sessionDate;
+        String[] date = sessionDate.split("T");
+        String[] time = date[1].split(".000Z");
+
+        this.sessionDate = date[0] + "    " + time[0];
         _id = UUID.randomUUID();
     }
 
