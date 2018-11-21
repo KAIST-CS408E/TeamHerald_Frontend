@@ -24,9 +24,9 @@ public class utils {
             {"Leveling Up", "Get to Level 5"},
             {"Hobbyist", "Log 10 biking sessions"},
             {"Better Safe than Sorry", "Log 5 biking safe sessions"},
-            {"Safe Landing", "Get 50 consecutive safe sessions"},
-            {"Getting There", "Get 10 consecutive safe sessions"},
-            {"Space Shooter", "Fire 500 times"},
+            {"Safe Landing", "Get 10 consecutive safe sessions"},
+            {"Getting There", "Get 5 consecutive safe sessions"},
+            {"Space Shooter", "Fire 50 times"},
             {"Easy Peasy", "Kill an opponent with more than half your health remaining"},
             {"Masterful", "Have a win/loss ratio above 60% with more than 10 battles"},
             {"Augmented Intelligence", "Get 10 kills in a row"}
