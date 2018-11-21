@@ -14,14 +14,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
@@ -32,6 +28,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -44,16 +41,16 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.gms.awareness.Awareness;
 import com.google.android.gms.awareness.state.Weather;
 import com.google.android.gms.awareness.snapshot.WeatherResponse;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.ActivityRecognition;
 import com.google.android.gms.location.ActivityTransition;
 import com.google.android.gms.location.ActivityTransitionEvent;
 import com.google.android.gms.location.ActivityTransitionRequest;
 import com.google.android.gms.location.ActivityTransitionResult;
 import com.google.android.gms.location.DetectedActivity;
-import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -68,13 +65,13 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
-public class Background extends Service implements LocationListener, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, SensorEventListener {
+public class Background extends Service {
 
-    //Location stuff
-    LocationRequest mLocationRequest;
-    GoogleApiClient mGoogleApiClient;
-    Location mCurrentLocation= null, lStart = null, lEnd=null;
+    // GPS stuff
+    Location mCurrentLocation = null;
+    private LocationCallback mLocationCallback;
+    private LocationRequest mLocationRequest;
+    private FusedLocationProviderClient mFusedLocationClient;
 
     //Transition stuff
     List<ActivityTransition> transitions = new ArrayList<>();
@@ -86,9 +83,6 @@ public class Background extends Service implements LocationListener, GoogleApiCl
 
     //Phone unlock/lock
     private PhoneUnlockedReceiver mUnlockReceiver;
-
-    //notifications
-    NotificationManager mNotificationManager;
 
     //Bike state
     public enum STATE{
@@ -103,17 +97,18 @@ public class Background extends Service implements LocationListener, GoogleApiCl
     List<List<String>> roads;
 
     // Constants/multipliers for weather conditions
-    final int normalspeed = 4;
-    final float rainspeedmultiplier = 0.4f;
-    final float intersectionspeedmultiplier = 0.75f;
+    final float normalspeed = 6.0f;
+    final float rainspeed = 4.75f;
+    final float intersectionspeed = 3.6f;
     final float threshold = 0.0003f;
 
     // Keeping track of previous locations
     double prevlat, prevlong;
+    public boolean firstLocation = true;
 
     // Weather stuff
     int currentday = 0;
-    int[] condition;
+    Integer[] condition;
     Boolean todayRain;
 
     // state checking
@@ -129,7 +124,6 @@ public class Background extends Service implements LocationListener, GoogleApiCl
     public boolean rainBiking = false;
     public boolean wrongLane = false;
     public long startTime;
-
 
     @Override
     public void onCreate(){
@@ -209,6 +203,7 @@ public class Background extends Service implements LocationListener, GoogleApiCl
         Notification notification = builder.build();
         this.startForeground(1, notification);
 
+
         //set up broadcast receiver
         mUnlockReceiver = new PhoneUnlockedReceiver(this);
         IntentFilter filter = new IntentFilter();
@@ -224,194 +219,8 @@ public class Background extends Service implements LocationListener, GoogleApiCl
         return START_STICKY;
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-        if(!haveNetworkConnection() || !isLocationEnabled(this)){
-            //Send notification to ask to turn it on
-            Log.e("TAG","Invalid location update(no connection)");
-
-            //Destroy the service itself
-            //stopSelf();
-        }
-        else{
-            Log.e("TAG", "Valid location update");
-
-            if (lStart == null) {
-                lStart = location;
-                lEnd = location;
-            } else {
-                lEnd = location;
-                float temp = location.distanceTo(mCurrentLocation);
-                totalDistance += temp;
-            }
-            mCurrentLocation = location;
-
-            Log.e("TAG", "Total distance: "+String.valueOf(totalDistance));
-
-            if (state == STATE.BIKING) {
-                double latitude = location.getLatitude();
-                double longitude = location.getLongitude();
-                float speed = location.getSpeed();
-
-                int idx;
-                double right1lat, right1long, right2lat, right2long, left1lat, left1long, left2lat, left2long;
-
-                // linear search for wrong lane
-                for (idx = 1; idx<roads.size(); idx++) {
-                    String whichSideOfRoad = null;
-                    String whichWayDriving = null;
-                    String orientation = roads.get(idx).get(9);
-                    boolean inRoad = false;
-                    left1lat = Double.parseDouble(roads.get(idx).get(1));
-                    left1long = Double.parseDouble(roads.get(idx).get(2));
-                    left2lat = Double.parseDouble(roads.get(idx).get(3));
-                    left2long = Double.parseDouble(roads.get(idx).get(4));
-                    right1lat = Double.parseDouble(roads.get(idx).get(5));
-                    right1long = Double.parseDouble(roads.get(idx).get(6));
-                    right2lat = Double.parseDouble(roads.get(idx).get(7));
-                    right2long = Double.parseDouble(roads.get(idx).get(8));
-
-                    if (orientation == "V") {
-                        if (left1long - left2long == 0) {
-                            if (latitude <= left1lat && latitude >= left2lat && longitude >= left1long && longitude <= right1long) {
-                                // we inside a road bois
-                                Log.e("TAG","ON A ROAD!");
-                                inRoad = true;
-                                if (prevlat > 0.0d + threshold) {
-                                    if (latitude - prevlat > 0 + threshold) {
-                                        whichWayDriving = "R";
-                                    } else {
-                                        whichWayDriving = "L";
-                                    }
-                                }
-
-                            }
-                        } else {
-                            double slopeL = (left1long - left2long) / (left1lat - left2lat);
-                            double slopeR = (right1long - right2long) / (right1lat - right2lat);
-                            if (latitude <= left1lat && latitude >= left2lat && longitude >= slopeL*(latitude-left2lat) + left2long && longitude <= slopeR*(latitude-right2lat) + right2long) {
-                                // we inside a road bois
-                                Log.e("TAG","ON A ROAD!");
-                                inRoad = true;
-                                if (prevlat > 0.0d) {
-                                    if (latitude - prevlat > 0 + threshold) {
-                                        whichWayDriving = "R";
-                                    } else {
-                                        whichWayDriving = "L";
-                                    }
-                                }
-
-                            }
-                        }
-                    } else {
-                        if (left1lat - left2lat == 0) {
-                            if (latitude <= left1lat && latitude >= right2lat && longitude <= left1long && longitude >= left2long) {
-                                // we inside a road bois
-                                Log.e("TAG","ON A ROAD!");
-                                inRoad = true;
-                                if (prevlong > 0.0d) {
-                                    if (longitude - prevlong > 0 + threshold) {
-                                        whichWayDriving = "R";
-                                    } else {
-                                        whichWayDriving = "L";
-                                    }
-                                }
-                            }
-                        } else {
-                            double slopeL = (left1lat - left2lat) / (left1long - left2long);
-                            double slopeR = (right1lat - right2lat) / (right1long - right2long);
-                            if (longitude <= left1long && longitude >= left2long && latitude >= slopeR*(longitude-right2long) + right2lat && latitude <= slopeL*(longitude-left2long) + left2lat) {
-                                // we inside a road bois
-                                Log.e("TAG","ON A ROAD!");
-                                inRoad = true;
-                                if (prevlong > 0.0d) {
-                                    if (longitude - prevlong > 0 + threshold) {
-                                        whichWayDriving = "R";
-                                    } else {
-                                        whichWayDriving = "L";
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    if (inRoad) {
-                        double disWithRight = Math.abs((right2long - right1long) * latitude - (right2lat - right1lat) * longitude + right2lat * right1long - right2long * right1lat)
-                                / Math.sqrt(Math.pow(right2long - right1long, 2) + Math.pow(right2lat - right1lat, 2));
-                        double disWithLeft = Math.abs((left2long - left1long) * latitude - (left2lat - left1lat) * longitude + left2lat * left1long - left2long * left1lat)
-                                / Math.sqrt(Math.pow(left2long - left1long, 2) + Math.pow(left2lat - left1lat, 2));
-
-                        if (disWithRight < disWithLeft) {
-                            // Closer to RIGHT
-                            whichSideOfRoad = "R";
-                        } else {
-                            // Closer to LEFT
-                            whichSideOfRoad = "L";
-                        }
-                        Log.e("TAG","CHECKING WRONG LANE?!?!?!");
-                        if (whichWayDriving != null && !whichSideOfRoad.equals(whichWayDriving)) {
-                            wrongLane = true;
-                            wrongLaneCount++;
-                            Log.e("TAG","WRONG LANE MOTHER FUCKER");
-                        }
-                        break;
-                    }
-                }
-
-                prevlat = latitude;
-                prevlong = longitude;
-
-                //linear search for intersection
-                for (idx = 1; idx<intersections.size(); idx++){
-                    double templat = Double.parseDouble(intersections.get(idx).get(1));
-                    if (latitude < templat - 0.0001) {
-                        atIntersection = 0;
-                        break;
-                    }
-                    if (latitude <= templat + 0.0001 && latitude >= templat - 0.0001) {
-                        double templong = Double.parseDouble(intersections.get(idx).get(2));
-                        if (longitude <= templong + 0.0001 && longitude >= templong - 0.0001) {
-                            // we in the intersection bois.
-                            atIntersection = 1;
-                            Log.e("TAG","ON AN INTERSECTION");
-                            break;
-                        }
-                    }
-
-                }
-                if (idx == intersections.size()) {
-                    atIntersection = 0;
-                }
-
-                // speed checking
-                float speedLimit = normalspeed*(rainspeedmultiplier+(1-rainspeedmultiplier)*(1-raining))*(intersectionspeedmultiplier+(1-intersectionspeedmultiplier)*(1-atIntersection));
-                if (speedLimit < speed) {
-                    Log.e("TAG","I AM SPEEDING: " + speed + speedLimit);
-                    if (speed > normalspeed) {
-                        speeding = true;
-                    }
-                    if (atIntersection == 1) {
-                        intersectionSpeeding = true;
-                    }
-                    if (raining == 1) {
-                        rainBiking = true;
-                    }
-                }
-            }
-        }
-    }
-
     //initialize violations and information.(States are not handled here)
     private void beginBikeSession(){
-
-        /* Connect to Google API */
-        createLocationRequest();
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(LocationServices.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
-        mGoogleApiClient.connect();
 
         Log.e("TAG", "beginBikeSession");
         vibrate();
@@ -423,22 +232,245 @@ public class Background extends Service implements LocationListener, GoogleApiCl
         intersectionSpeeding = false;
         rainBiking = false;
         wrongLane = false;
+        firstLocation = true;
         atIntersection = 0;
         raining = 0;
         prevlat = 0;
         prevlong = 0;
         wrongLaneCount = 0;
         startTime = Calendar.getInstance().getTimeInMillis();
+
+        //GPS
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+                if(!haveNetworkConnection() || !isLocationEnabled(Background.this)){
+                    //Send notification to ask to turn it on
+                    Log.e("TAG","Invalid location update(no connection)");
+
+                    //Destroy the service itself
+                    //stopSelf();
+                } else {
+                    for (Location location : locationResult.getLocations()) {
+                        // Update UI with location data
+                        Log.e("TAG", "Valid location update");
+                        Calendar cal2;
+                        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(Background.this);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        cal2 = Calendar.getInstance();
+                        int tempday = cal2.get(Calendar.DAY_OF_MONTH);
+                        if (currentday == 0) {
+                            currentday = tempday;
+                        } else if (currentday != tempday) {
+                            if (tempday - currentday == 1) {
+                                currentday = tempday;
+                                if (todayRain != null) {
+                                    editor.putBoolean("rain", todayRain);
+                                    todayRain = null;
+                                    editor.apply();
+                                }
+                            } else {
+                                editor.remove("rain");
+                                editor.apply();
+                                todayRain = null;
+                            }
+                        }
+
+                        getWeatherSnapshot();
+
+                        if (condition != null) {
+                            if (Arrays.asList(condition).contains(5) || Arrays.asList(condition).contains(6) || Arrays.asList(condition).contains(7) || Arrays.asList(condition).contains(8)) {
+                                todayRain = true;
+                            } else if (todayRain == null) {
+                                todayRain = false;
+                            }
+                        }
+
+                        boolean ytdrain = sharedPreferences.getBoolean("rain", false);
+                        if (todayRain != null) {
+                            if (ytdrain || todayRain) {
+                                raining = 1;
+                            }
+                        } else {
+                            if (ytdrain) {
+                                raining = 1;
+                            }
+                        }
+
+                        if (state == STATE.BIKING) {
+                            if (firstLocation) {
+                                firstLocation = false;
+                            } else {
+                                if (mCurrentLocation != null) {
+                                    float temp = location.distanceTo(mCurrentLocation);
+                                    totalDistance += temp;
+                                }
+                                mCurrentLocation = location;
+
+                                Log.e("TAG", "Total distance: " + String.valueOf(totalDistance));
+                                double latitude = location.getLatitude();
+                                double longitude = location.getLongitude();
+                                float speed = location.getSpeed();
+
+                                Log.d("TAG", latitude + "," + longitude);
+
+                                int idx;
+                                double right1lat, right1long, right2lat, right2long, left1lat, left1long, left2lat, left2long;
+
+                                // linear search for wrong lane
+                                for (idx = 1; idx < roads.size(); idx++) {
+                                    String whichSideOfRoad;
+                                    String whichWayDriving = null;
+                                    String orientation = roads.get(idx).get(9);
+                                    boolean inRoad = false;
+                                    String description = roads.get(idx).get(0);
+                                    left1lat = Double.parseDouble(roads.get(idx).get(1));
+                                    left1long = Double.parseDouble(roads.get(idx).get(2));
+                                    left2lat = Double.parseDouble(roads.get(idx).get(3));
+                                    left2long = Double.parseDouble(roads.get(idx).get(4));
+                                    right1lat = Double.parseDouble(roads.get(idx).get(5));
+                                    right1long = Double.parseDouble(roads.get(idx).get(6));
+                                    right2lat = Double.parseDouble(roads.get(idx).get(7));
+                                    right2long = Double.parseDouble(roads.get(idx).get(8));
+
+                                    if (orientation.equals("V")) {
+                                        if (left1long - left2long == 0) {
+                                            if (latitude <= left1lat && latitude >= left2lat && longitude >= left1long && longitude <= right1long) {
+                                                // we inside a road bois
+                                                Log.e("TAG", "ON A ROAD: " + description);
+                                                inRoad = true;
+                                                if (prevlat > 0.0d) {
+                                                    if (latitude - prevlat > 0 + threshold) {
+                                                        whichWayDriving = "R";
+                                                    } else if (latitude - prevlat < 0 - threshold){
+                                                        whichWayDriving = "L";
+                                                    }
+                                                }
+
+                                            }
+                                        } else {
+                                            double slopeL = (left1long - left2long) / (left1lat - left2lat);
+                                            double slopeR = (right1long - right2long) / (right1lat - right2lat);
+                                            if (latitude <= left1lat && latitude >= left2lat && longitude >= slopeL * (latitude - left2lat) + left2long && longitude <= slopeR * (latitude - right2lat) + right2long) {
+                                                // we inside a road bois
+                                                Log.e("TAG", "ON A ROAD: " + description);
+                                                inRoad = true;
+                                                if (prevlat > 0.0d) {
+                                                    if (latitude - prevlat > 0 + threshold) {
+                                                        whichWayDriving = "R";
+                                                    } else if (latitude - prevlat < 0 - threshold){
+                                                        whichWayDriving = "L";
+                                                    }
+                                                }
+
+                                            }
+                                        }
+                                    } else {
+                                        if (left1lat - left2lat == 0) {
+                                            if (latitude <= left1lat && latitude >= right2lat && longitude <= left1long && longitude >= left2long) {
+                                                // we inside a road bois
+                                                Log.e("TAG", "ON A ROAD: " + description);
+                                                inRoad = true;
+                                                if (prevlong > 0.0d) {
+                                                    if (longitude - prevlong > 0 + threshold) {
+                                                        whichWayDriving = "R";
+                                                    } else if (longitude - prevlong < 0 - threshold) {
+                                                        whichWayDriving = "L";
+                                                    }
+                                                }
+                                            }
+                                        } else {
+                                            double slopeL = (left1lat - left2lat) / (left1long - left2long);
+                                            double slopeR = (right1lat - right2lat) / (right1long - right2long);
+                                            if (longitude <= left1long && longitude >= left2long && latitude >= slopeR * (longitude - right2long) + right2lat && latitude <= slopeL * (longitude - left2long) + left2lat) {
+                                                // we inside a road bois
+                                                Log.e("TAG", "ON A ROAD: " + description);
+                                                inRoad = true;
+                                                if (prevlong > 0.0d) {
+                                                    if (longitude - prevlong > 0 + threshold) {
+                                                        whichWayDriving = "R";
+                                                    } else if (longitude - prevlong < 0 - threshold){
+                                                        whichWayDriving = "L";
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    if (inRoad) {
+                                        double disWithRight = Math.abs((right2long - right1long) * latitude - (right2lat - right1lat) * longitude + right2lat * right1long - right2long * right1lat)
+                                                / Math.sqrt(Math.pow(right2long - right1long, 2) + Math.pow(right2lat - right1lat, 2));
+                                        double disWithLeft = Math.abs((left2long - left1long) * latitude - (left2lat - left1lat) * longitude + left2lat * left1long - left2long * left1lat)
+                                                / Math.sqrt(Math.pow(left2long - left1long, 2) + Math.pow(left2lat - left1lat, 2));
+
+                                        if (disWithRight < disWithLeft) {
+                                            // Closer to RIGHT
+                                            whichSideOfRoad = "R";
+                                        } else {
+                                            // Closer to LEFT
+                                            whichSideOfRoad = "L";
+                                        }
+                                        Log.e("TAG", "CHECKING WRONG LANE?!?!?!");
+                                        if (whichWayDriving != null && !whichSideOfRoad.equals(whichWayDriving)) {
+                                            wrongLane = true;
+                                            wrongLaneCount++;
+                                            Log.e("TAG", "WRONG LANE MOTHER FUCKER");
+                                        }
+                                        break;
+                                    }
+                                }
+
+                                prevlat = latitude;
+                                prevlong = longitude;
+
+                                //linear search for intersection
+                                for (idx = 1; idx < intersections.size(); idx++) {
+                                    double templat = Double.parseDouble(intersections.get(idx).get(1));
+                                    if (latitude < templat - 0.0001) {
+                                        atIntersection = 0;
+                                        break;
+                                    }
+                                    if (latitude <= templat + 0.0001 && latitude >= templat - 0.0001) {
+                                        double templong = Double.parseDouble(intersections.get(idx).get(2));
+                                        if (longitude <= templong + 0.0001 && longitude >= templong - 0.0001) {
+                                            // we in the intersection bois.
+                                            atIntersection = 1;
+                                            Log.e("TAG", "ON AN INTERSECTION: " + intersections.get(idx).get(0));
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (idx == intersections.size()) {
+                                    atIntersection = 0;
+                                }
+
+                                // speed checking
+                                if (speed > normalspeed) {
+                                    speeding = true;
+                                }
+                                if (speed > intersectionspeed && atIntersection == 1) {
+                                    intersectionSpeeding = true;
+                                }
+                                if (speed > rainspeed && raining == 1) {
+                                    rainBiking = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+        createLocationRequest();
+        startLocationUpdates();
     }
 
     //check violations and send to server.
     public void endBikeSession(){
         stopLocationUpdates();
-        if(mGoogleApiClient.isConnected()){
-            mGoogleApiClient.disconnect();
-        }
-        lStart= null;
-        lEnd = null;
 
         Log.e("TAG", "endBikeSession");
         vibrate();
@@ -472,7 +504,7 @@ public class Background extends Service implements LocationListener, GoogleApiCl
         if(intersectionSpeeding){
             penaltyArray.put("intersection");
         }
-        if(wrongLane){
+        if(wrongLaneCount < 50){
             penaltyArray.put("lane");
         }
 
@@ -531,49 +563,6 @@ public class Background extends Service implements LocationListener, GoogleApiCl
                 ActivityTransitionResult result = ActivityTransitionResult.extractResult(intent);
                 for (ActivityTransitionEvent event : result.getTransitionEvents()) {
                     // per event
-                    Calendar cal2;
-                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(Background.this);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    cal2 = Calendar.getInstance();
-                    int tempday = cal2.get(Calendar.DAY_OF_MONTH);
-                    if (currentday == 0) {
-                        currentday = tempday;
-                    } else if (currentday != tempday){
-                        if (tempday - currentday == 1) {
-                            currentday = tempday;
-                            if (todayRain != null) {
-                                editor.putBoolean("rain", todayRain);
-                                todayRain = null;
-                                editor.apply();
-                            }
-                        } else {
-                            editor.remove("rain");
-                            editor.apply();
-                            todayRain = null;
-                        }
-                    }
-
-                    getWeatherSnapshot();
-
-                    if (condition != null) {
-                        if (Arrays.asList(condition).contains(5) || Arrays.asList(condition).contains(6) || Arrays.asList(condition).contains(7) || Arrays.asList(condition).contains(8)) {
-                            todayRain = true;
-                        } else if (todayRain == null) {
-                            todayRain = false;
-                        }
-                    }
-
-                    boolean ytdrain = sharedPreferences.getBoolean("rain", false);
-                    if (todayRain != null) {
-                        if (ytdrain || todayRain) {
-                            raining = 1;
-                        }
-                    } else {
-                        if (ytdrain) {
-                            raining = 1;
-                        }
-                    }
-
                     switch(event.getTransitionType()) {
                         //relevant types
                         case ActivityTransition.ACTIVITY_TRANSITION_ENTER:
@@ -590,18 +579,23 @@ public class Background extends Service implements LocationListener, GoogleApiCl
         }
     }
 
+    private void startLocationUpdates() {
+        if (ContextCompat.checkSelfPermission(Background.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Log.e("TAG", "DO I EVER GET HERE?");
+            mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback,null /* Looper */);
+        }
+    }
 
-    protected void stopLocationUpdates() {
-        LocationServices.FusedLocationApi.removeLocationUpdates(
-                mGoogleApiClient, this);
+    private void stopLocationUpdates() {
+        mFusedLocationClient.removeLocationUpdates(mLocationCallback);
     }
 
     protected void createLocationRequest() {
         mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(500);//1 second interval
-        mLocationRequest.setFastestInterval(500);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setInterval(Constants.LOCATION_INTERVAL_IN_MILLISECONDS);
+        mLocationRequest.setFastestInterval(Constants.FASTEST_LOCATION_INTERVAL_IN_MILLISECONDS);
         mLocationRequest.setSmallestDisplacement(1);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
     private void vibrate(){
@@ -648,37 +642,11 @@ public class Background extends Service implements LocationListener, GoogleApiCl
         super.onDestroy();
         Log.e("TAG","onDestroy");
     }
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        Log.e("TAG", "Connected");
-
-        //Location initialise
-        try {
-            LocationServices.FusedLocationApi.requestLocationUpdates(
-                    mGoogleApiClient, mLocationRequest, this);
-        } catch (SecurityException e) {
-        }
-    }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;
-    }
-    @Override
-    public void onSensorChanged(SensorEvent sensorEvent) {
-    }
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int i) {
-
-    }
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
     }
 
     //connection checkers
@@ -727,7 +695,13 @@ public class Background extends Service implements LocationListener, GoogleApiCl
                         @Override
                         public void onSuccess(WeatherResponse weatherResponse) {
                             Weather weather = weatherResponse.getWeather();
-                            condition = weather.getConditions();
+
+                            int[] temp = weather.getConditions();
+                            Integer[] newArray = new Integer[temp.length];
+                            for (int i = 0; i < temp.length; i++) {
+                                newArray[i] = temp[i];
+                            }
+                            condition = newArray;
                             //Log.e("TAG","weather" + weather);
                         }
                     })
