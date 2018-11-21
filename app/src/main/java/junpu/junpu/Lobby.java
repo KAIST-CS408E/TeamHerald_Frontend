@@ -405,6 +405,8 @@ public class Lobby extends AppCompatActivity {
                         @Override
                         public void onResponse(JSONObject response) {
                             battleData = response;
+                            Log.v("TAG", response.toString());
+                            Log.v("TAG", battleData.toString());
                             try {
                                 Button battleBtn = (Button) findViewById(R.id.btn_battle);
                                 if (battleData.getBoolean("in_battle")) {
