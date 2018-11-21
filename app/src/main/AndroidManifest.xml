@@ -2,8 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="junpu.junpu">
 
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/>
 
+
+
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
@@ -34,15 +40,16 @@
         <activity
             android:name=".CustomizeShip"
             android:parentActivityName=".Main" />
-        <activity android:name=".Battle" />
-        <activity android:name=".Lobby"></activity>
-        <activity android:name=".BikeSessions"></activity>
-        <activity android:name=".Achievements"></activity>
+        <activity android:name=".Battle"/>
+        <activity android:name=".Lobby"/>
+        <activity android:name=".BikeSessions"/>
+        <activity android:name=".Achievements"/>
 
         <service android:name=".Background"
             android:stopWithTask="false"/>
 
         <receiver android:name=".PhoneUnlockedReceiver"/>
+
 
     </application>
 

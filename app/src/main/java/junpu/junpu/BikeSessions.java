@@ -30,7 +30,7 @@ public class BikeSessions extends AppCompatActivity{
     @Override
     protected void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
-        ((MyAdapter)recyclerView.getAdapter()).onSaveInstanceState(outState);
+//        ((MyAdapter)recyclerView.getAdapter()).onSaveInstanceState(outState);
     }
 
     @Override
