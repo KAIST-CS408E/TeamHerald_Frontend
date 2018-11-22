@@ -167,7 +167,7 @@ public class Lobby extends AppCompatActivity {
                         // TODO: Handle Errors here
                     }
                 });
-
+        req.setShouldCache(false);
         requestQueue.add(req);
     }
 
@@ -405,6 +405,8 @@ public class Lobby extends AppCompatActivity {
                         @Override
                         public void onResponse(JSONObject response) {
                             battleData = response;
+                            Log.v("TAG", response.toString());
+                            Log.v("TAG", battleData.toString());
                             try {
                                 Button battleBtn = (Button) findViewById(R.id.btn_battle);
                                 if (battleData.getBoolean("in_battle")) {
@@ -423,6 +425,7 @@ public class Lobby extends AppCompatActivity {
                             // TODO: handle exception here
                         }
                     });
+            req.setShouldCache(false);
             requestQueue.add(req);
         } catch (JSONException e) {
             e.printStackTrace();
