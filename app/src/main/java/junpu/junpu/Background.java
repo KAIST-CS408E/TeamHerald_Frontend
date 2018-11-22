@@ -72,6 +72,7 @@ import java.util.List;
 public class Background extends Service {
 
     AudioManager mAudioManager;
+    JSONArray logArray = null;
 
     // GPS stuff
     Location mCurrentLocation = null;
@@ -249,7 +250,7 @@ public class Background extends Service {
 
         Log.e("TAG", "beginBikeSession");
         vibrate();
-
+        logArray = new JSONArray();
         //general stats
         totalDistance = 0;
         phoneViolation = false;
@@ -348,6 +349,8 @@ public class Background extends Service {
                                     totalDistance += temp;
                                 }
                                 mCurrentLocation = location;
+
+                                String logString;
 
                                 //Log.e("TAG", "Total distance: " + String.valueOf(totalDistance));
                                 double latitude = location.getLatitude();
@@ -498,6 +501,11 @@ public class Background extends Service {
                                     rainBiking = true;
                                     Log.d("TAG", "rain: " + speed);
                                 }
+
+                                logString = Double.toString(latitude) + "," + Double.toString(longitude) + "," + Float.toString(speed);
+                                if (logArray != null) {
+                                    logArray.put(logString);
+                                }
                             }
                         }
                     }
@@ -555,6 +563,7 @@ public class Background extends Service {
             session.put("duration", durationSeconds);
             session.put("distance", totalDistance);
             session.put("penalty", penaltyArray);
+            session.put("log", logArray);
         } catch (JSONException e) {
             e.printStackTrace();
         }
