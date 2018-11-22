@@ -103,10 +103,10 @@ public class Background extends Service {
     List<List<String>> roads;
 
     // Constants/multipliers for weather conditions
-    final float normalspeed = 6.0f;
-    final float rainspeed = 4.75f;
-    final float intersectionspeed = 3.6f;
-    final float threshold = 0.0003f;
+    final float normalspeed = 5.0f;
+    final float rainspeed = 4.0f;
+    final float intersectionspeed = 4f;
+    final float threshold = 0.00001f;
 
     // Keeping track of previous locations
     double prevlat, prevlong;
@@ -295,7 +295,7 @@ public class Background extends Service {
                 } else {
                     for (Location location : locationResult.getLocations()) {
                         // Update UI with location data
-                        Log.e("TAG", "Valid location update");
+                        //Log.e("TAG", "Valid location update");
                         Calendar cal2;
                         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(Background.this);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -489,12 +489,15 @@ public class Background extends Service {
                                 // speed checking
                                 if (speed > normalspeed) {
                                     speeding = true;
+                                    Log.d("TAG", "speeding: " + speed);
                                 }
                                 if (speed > intersectionspeed && atIntersection == 1) {
                                     intersectionSpeeding = true;
+                                    Log.d("TAG", "inter: " + speed);
                                 }
                                 if (speed > rainspeed && raining == 1) {
                                     rainBiking = true;
+                                    Log.d("TAG", "rain: " + speed);
                                 }
                             }
                         }
@@ -527,8 +530,7 @@ public class Background extends Service {
         JSONObject session = new JSONObject();
         JSONArray penaltyArray = new JSONArray();
 
-        Log.d("TAG", "Penalties: " + phoneViolation + speeding + rainBiking + intersectionSpeeding + wrongLane);
-        Log.d("TAG", "Wrong Lane count!: " + wrongLaneCount);
+        Log.d("TAG", "Penalties: " + phoneViolation + speeding + rainBiking + intersectionSpeeding + wrongLaneCount);
 
         if(phoneViolation){
             penaltyArray.put("phone");
@@ -622,7 +624,6 @@ public class Background extends Service {
 
     private void startLocationUpdates() {
         if (ContextCompat.checkSelfPermission(Background.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            Log.e("TAG", "DO I EVER GET HERE?");
             mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback,null /* Looper */);
         }
     }
