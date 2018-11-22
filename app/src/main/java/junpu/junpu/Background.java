@@ -105,7 +105,7 @@ public class Background extends Service {
     // Constants/multipliers for weather conditions
     final float normalspeed = 5.0f;
     final float rainspeed = 4.0f;
-    final float intersectionspeed = 4f;
+    final float intersectionspeed = 4.1f;
     final float threshold = 0.00001f;
 
     // Keeping track of previous locations
@@ -543,7 +543,7 @@ public class Background extends Service {
         if(intersectionSpeeding){
             penaltyArray.put("intersection");
         }
-        if(wrongLaneCount < 50){
+        if(wrongLaneCount < 20){
             penaltyArray.put("lane");
         }
         if(musicViolation){
@@ -551,7 +551,7 @@ public class Background extends Service {
         }
 
         try {
-            session.put("android_id", "8f5b7333cca13357");
+            session.put("android_id", Settings.Secure.ANDROID_ID);
             session.put("duration", durationSeconds);
             session.put("distance", totalDistance);
             session.put("penalty", penaltyArray);
