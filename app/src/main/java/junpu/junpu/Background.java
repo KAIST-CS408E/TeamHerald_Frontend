@@ -349,7 +349,7 @@ public class Background extends Service {
                                 }
                                 mCurrentLocation = location;
 
-                                Log.e("TAG", "Total distance: " + String.valueOf(totalDistance));
+                                //Log.e("TAG", "Total distance: " + String.valueOf(totalDistance));
                                 double latitude = location.getLatitude();
                                 double longitude = location.getLongitude();
                                 float speed = location.getSpeed();
@@ -452,11 +452,10 @@ public class Background extends Service {
                                             // Closer to LEFT
                                             whichSideOfRoad = "L";
                                         }
-                                        Log.e("TAG", "CHECKING WRONG LANE?!?!?!");
                                         if (whichWayDriving != null && !whichSideOfRoad.equals(whichWayDriving)) {
                                             wrongLane = true;
                                             wrongLaneCount++;
-                                            Log.e("TAG", "WRONG LANE MOTHER FUCKER");
+                                            Log.e("TAG", "WRONG LANE MOTHER");
                                         }
                                         break;
                                     }
@@ -636,7 +635,7 @@ public class Background extends Service {
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(Constants.LOCATION_INTERVAL_IN_MILLISECONDS);
         mLocationRequest.setFastestInterval(Constants.FASTEST_LOCATION_INTERVAL_IN_MILLISECONDS);
-        mLocationRequest.setSmallestDisplacement(1);
+        mLocationRequest.setSmallestDisplacement(0);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
