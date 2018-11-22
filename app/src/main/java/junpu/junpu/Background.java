@@ -551,7 +551,7 @@ public class Background extends Service {
         }
 
         try {
-            session.put("android_id", Settings.Secure.ANDROID_ID);
+            session.put("android_id", Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
             session.put("duration", durationSeconds);
             session.put("distance", totalDistance);
             session.put("penalty", penaltyArray);

@@ -144,8 +144,7 @@ public class Lobby extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        String url = utils.URL + "user_info?id=" + Settings.Secure.ANDROID_ID;
-        //String url = utils.URL + "user_info?id=" + Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        String url = utils.URL + "user_info?id=" + Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, url, (String) null,
                 new Response.Listener<JSONObject>() {
                     @Override

@@ -94,7 +94,7 @@ public class CustomizeShip extends Activity implements OnItemSelectedListener {
     // TODO: move from ship customziation back to main page
     public void createUser(View v) {
         String url = utils.URL + "add_user";
-        String androidID = Secure.getString(getContentResolver(), Secure.ANDROID_ID);
+        String androidID = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         String[] keys = {"android_id", "user_id", "color_1", "color_2", "color_3"};
         String[] values = {androidID, userID, primaryColor, secondaryColor, tertiaryColor};
         JSONObject data = utils.createJSONObj(keys, values);
