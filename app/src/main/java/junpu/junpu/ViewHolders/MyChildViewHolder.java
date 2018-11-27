@@ -19,8 +19,10 @@ public class MyChildViewHolder extends com.bignerdranch.expandablerecyclerview.V
 
         //text views
         points = itemView.findViewById(R.id.points);
+        /*
         distance = itemView.findViewById(R.id.distance);
         duration = itemView.findViewById(R.id.duration);
+        */
 
         //relative layouts
         safe_speed = itemView.findViewById(R.id.safe_speed);

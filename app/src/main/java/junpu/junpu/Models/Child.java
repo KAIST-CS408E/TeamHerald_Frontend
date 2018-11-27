@@ -14,11 +14,12 @@ public class Child {
     private boolean laneCheck;
     private boolean intersectionCheck;
 
-    public Child(String points, String distance, String duration,
+    public Child(String points, /*String distance, String duration,*/
                  boolean speedingCheck, boolean weatherCheck, boolean phoneCheck, boolean laneCheck, boolean intersectionCheck){
 
 
         this.points = "Points: " + points;
+        /*
         this.distance = "Distance: " + distance + " m";
 
         int total = Integer.parseInt(duration);
@@ -26,7 +27,7 @@ public class Child {
         String seconds = String.valueOf(total%60);
 
         this.duration = "Duration: " + minutes + " mins " + seconds + " secs";
-
+        */
         this.speedingCheck = speedingCheck;
         this.weatherCheck = weatherCheck;
         this.phoneCheck = phoneCheck;
@@ -41,7 +42,7 @@ public class Child {
     public void setPoints(String points) {
         this.points = points;
     }
-
+    /*
     public String getDistance() {
         return distance;
     }
@@ -57,7 +58,7 @@ public class Child {
     public void setDuration(String duration) {
         this.duration = duration;
     }
-
+    */
     public boolean isSpeedingCheck() {
         return speedingCheck;
     }

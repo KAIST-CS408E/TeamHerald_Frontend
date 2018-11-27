@@ -20,34 +20,22 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:text="General Statistics"
-                android:textStyle="bold"
-                android:textColor="#FFFFFF"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:text="General Statistics"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/points"
-                android:text = "Points earned"
-                android:padding = "8dp"
-                android:textColor="#FFFFFF"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="Points earned"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp" />
 
-            <TextView
-                android:id="@+id/distance"
-                android:padding = "8dp"
-                android:text = "Distance"
-                android:textColor="#FFFFFF"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <TextView
-                android:id="@+id/duration"
-                android:padding = "8dp"
-                android:text = "Duration"
-                android:textColor="#FFFFFF"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
         </LinearLayout>
 
         <LinearLayout
@@ -55,12 +43,14 @@
             android:padding="8dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <TextView
-                android:text="Safe Biker Metrics"
-                android:textStyle="bold"
-                android:textColor="#FFFFFF"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:text="Safe Biker Metrics"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"
+                android:textStyle="bold" />
 
             <RelativeLayout
                 android:id="@+id/safe_speed"
@@ -68,29 +58,31 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:padding = "8dp"
-                    android:textColor="#FFFFFF"
-                    android:text = "Bike At Safe Speeds"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:text="Safe Speeds"
+                    android:textColor="#FFFFFF"
+                    android:textSize="24sp" />
 
                 <ImageView
                     android:id="@+id/speed_check"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_alignParentRight="true"
                     android:padding="8dp"
+                    android:src="@drawable/check"
                     android:textColor="#FFFFFF"
-                    android:src = "@drawable/check"
-                    android:visibility="invisible"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"/>
+                    android:visibility="invisible" />
+
                 <ImageView
                     android:id="@+id/speed_cross"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_alignParentRight="true"
                     android:padding="8dp"
-                    android:src = "@drawable/cross"
-                    android:visibility="invisible"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"/>
+                    android:src="@drawable/cross"
+                    android:visibility="invisible" />
             </RelativeLayout>
 
 
@@ -98,28 +90,32 @@
                 android:id="@+id/safe_weather"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
+
                 <TextView
-                    android:padding = "8dp"
-                    android:textColor="#FFFFFF"
-                    android:text = "Do Not Bike In Rain/Snow"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:text="Not Rain/Snow"
+                    android:textColor="#FFFFFF"
+                    android:textSize="24sp" />
+
                 <ImageView
                     android:id="@+id/weather_check"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_alignParentRight="true"
                     android:padding="8dp"
-                    android:src = "@drawable/check"
-                    android:visibility="invisible"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"/>
+                    android:src="@drawable/check"
+                    android:visibility="invisible" />
+
                 <ImageView
                     android:id="@+id/weather_cross"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_alignParentRight="true"
                     android:padding="8dp"
-                    android:src = "@drawable/cross"
-                    android:visibility="invisible"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"/>
+                    android:src="@drawable/cross"
+                    android:visibility="invisible" />
             </RelativeLayout>
 
 
@@ -127,28 +123,32 @@
                 android:id="@+id/safe_phone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
+
                 <TextView
-                    android:padding = "8dp"
-                    android:textColor="#FFFFFF"
-                    android:text = "Keep Your Phone in Your Pocket"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:text="Phone in Pocket"
+                    android:textColor="#FFFFFF"
+                    android:textSize="24sp" />
+
                 <ImageView
                     android:id="@+id/phone_check"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_alignParentRight="true"
                     android:padding="8dp"
-                    android:src = "@drawable/check"
-                    android:visibility="invisible"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"/>
+                    android:src="@drawable/check"
+                    android:visibility="invisible" />
+
                 <ImageView
                     android:id="@+id/phone_cross"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_alignParentRight="true"
                     android:padding="8dp"
-                    android:src = "@drawable/cross"
-                    android:visibility="invisible"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"/>
+                    android:src="@drawable/cross"
+                    android:visibility="invisible" />
             </RelativeLayout>
 
 
@@ -156,56 +156,64 @@
                 android:id="@+id/safe_lane"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
+
                 <TextView
-                    android:padding = "8dp"
-                    android:textColor="#FFFFFF"
-                    android:text = "Bike in Correct Lane"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:text="Correct Lane"
+                    android:textColor="#FFFFFF"
+                    android:textSize="24sp" />
+
                 <ImageView
                     android:id="@+id/lane_check"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_alignParentRight="true"
                     android:padding="8dp"
-                    android:src = "@drawable/check"
-                    android:visibility="invisible"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"/>
+                    android:src="@drawable/check"
+                    android:visibility="invisible" />
+
                 <ImageView
                     android:id="@+id/lane_cross"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_alignParentRight="true"
                     android:padding="8dp"
-                    android:src = "@drawable/cross"
-                    android:visibility="invisible"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"/>
+                    android:src="@drawable/cross"
+                    android:visibility="invisible" />
             </RelativeLayout>
 
             <RelativeLayout
                 android:id="@+id/safe_intersection"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
+
                 <TextView
-                    android:padding = "8dp"
-                    android:textColor="#FFFFFF"
-                    android:text = "Slow Down at Intersections"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:text="Slow at Intersections"
+                    android:textColor="#FFFFFF"
+                    android:textSize="24sp" />
+
                 <ImageView
                     android:id="@+id/intersection_check"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_alignParentRight="true"
                     android:padding="8dp"
-                    android:src = "@drawable/check"
-                    android:visibility="invisible"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"/>
+                    android:src="@drawable/check"
+                    android:visibility="invisible" />
+
                 <ImageView
                     android:id="@+id/intersection_cross"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_alignParentRight="true"
                     android:padding="8dp"
-                    android:src = "@drawable/cross"
-                    android:visibility="invisible"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"/>
+                    android:src="@drawable/cross"
+                    android:visibility="invisible" />
             </RelativeLayout>
         </LinearLayout>
     </LinearLayout>

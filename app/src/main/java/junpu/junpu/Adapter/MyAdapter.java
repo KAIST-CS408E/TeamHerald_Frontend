@@ -52,8 +52,10 @@ public class MyAdapter extends ExpandableRecyclerAdapter<MyParentViewHolder, MyC
 
         //general statistics
         titleChildViewHolder.points.setText(title.getPoints());
+        /*
         titleChildViewHolder.distance.setText(title.getDistance());
         titleChildViewHolder.duration.setText(title.getDuration());
+        */
 
         //violations
         setCheckOrCross(titleChildViewHolder.safe_speed, title.isSpeedingCheck(),R.id.speed_check, R.id.speed_cross);

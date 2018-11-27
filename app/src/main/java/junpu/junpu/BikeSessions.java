@@ -80,13 +80,13 @@ public class BikeSessions extends AppCompatActivity{
         int numberOfSessions = array.length();
         for(int i =0; i < numberOfSessions; i++) {
             JSONObject jsonObject = array.getJSONObject(i);
-
             //general information
             String date = jsonObject.getString("datetime");
             String duration = jsonObject.getString("duration");
             String distance = jsonObject.getString("distance");
             String penalty = jsonObject.getString("penalty");
-            int temp =Integer.parseInt(duration)/300 - penalty.length();
+            JSONArray penaltyArr = new JSONArray(penalty);
+            int temp = Integer.parseInt(duration)/300 - penaltyArr.length();
             if(temp < 0 ){
                 temp = 0;
             }
@@ -129,7 +129,7 @@ public class BikeSessions extends AppCompatActivity{
 
             //each parent must have a list of children(in my case, i only have one child)
             List<Object> childList = new ArrayList<>();
-            childList.add(new Child(points, distance, duration, speedingCheck, weatherCheck, phoneCheck, laneCheck, intersectionCheck));
+            childList.add(new Child(points, /*distance, duration,*/ speedingCheck, weatherCheck, phoneCheck, laneCheck, intersectionCheck));
 
             //add to parent
             parent.setChildObjectList(childList);
@@ -148,11 +148,11 @@ public class BikeSessions extends AppCompatActivity{
         for(Parent title: titles){
             List<Object> childList = new ArrayList<>();
             if(i%2 == 0){
-                childList.add(new Child(String.format("Points: %d",i), String.format("Distance: %d",i),
-                        String.format("Duration: %d",i),true,false,true,false,true));
+                childList.add(new Child(String.format("Points: %d",i), /*String.format("Distance: %d",i),
+                        String.format("Duration: %d",i),*/true,false,true,false,true));
             }else{
-                childList.add(new Child(String.format("Points: %d",i), String.format("Distance: %d",i),
-                        String.format("Duration: %d",i),false,true,false,true,false));
+                childList.add(new Child(String.format("Points: %d",i), /*String.format("Distance: %d",i),
+                        String.format("Duration: %d",i),*/false,true,false,true,false));
             }
             title.setChildObjectList(childList);
             parentObject.add(title);
