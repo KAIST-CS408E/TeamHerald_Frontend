@@ -13,9 +13,10 @@ public class Child {
     private boolean phoneCheck;
     private boolean laneCheck;
     private boolean intersectionCheck;
+    private boolean musicCheck;
 
     public Child(String points, /*String distance, String duration,*/
-                 boolean speedingCheck, boolean weatherCheck, boolean phoneCheck, boolean laneCheck, boolean intersectionCheck){
+                 boolean speedingCheck, boolean weatherCheck, boolean phoneCheck, boolean laneCheck, boolean intersectionCheck,boolean musicCheck){
 
 
         this.points = "Points: " + points;
@@ -33,6 +34,7 @@ public class Child {
         this.phoneCheck = phoneCheck;
         this.laneCheck = laneCheck;
         this.intersectionCheck = intersectionCheck;
+        this.musicCheck = musicCheck;
     }
 
     public String getPoints() {
@@ -97,5 +99,13 @@ public class Child {
 
     public void setIntersectionCheck(boolean intersectionCheck) {
         this.intersectionCheck = intersectionCheck;
+    }
+
+    public boolean isMusicCheck() {
+        return musicCheck;
+    }
+
+    public void setMusicCheck(boolean musicCheck) {
+        this.musicCheck = musicCheck;
     }
 }

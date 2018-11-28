@@ -98,6 +98,7 @@ public class BikeSessions extends AppCompatActivity{
             Boolean phoneCheck;
             Boolean laneCheck;
             Boolean intersectionCheck;
+            Boolean musicCheck;
             if(penalty.contains("speed")){
                 speedingCheck = true;
             }else{
@@ -123,13 +124,18 @@ public class BikeSessions extends AppCompatActivity{
             }else{
                 intersectionCheck = false;
             }
+            if(penalty.contains("music")){
+                musicCheck = true;
+            }else{
+                musicCheck = false;
+            }
 
             //create parent
             Parent parent = new Parent(date);
 
             //each parent must have a list of children(in my case, i only have one child)
             List<Object> childList = new ArrayList<>();
-            childList.add(new Child(points, /*distance, duration,*/ speedingCheck, weatherCheck, phoneCheck, laneCheck, intersectionCheck));
+            childList.add(new Child(points, /*distance, duration,*/ speedingCheck, weatherCheck, phoneCheck, laneCheck, intersectionCheck,musicCheck));
 
             //add to parent
             parent.setChildObjectList(childList);
@@ -140,26 +146,26 @@ public class BikeSessions extends AppCompatActivity{
         return parentObject;
     }
 
-    private List<ParentObject> testingOnly(){
-        TitleCreator titleCreator = TitleCreator.get(this);
-        List<Parent> titles = titleCreator.getAll();
-        List<ParentObject> parentObject = new ArrayList<>();
-        int i =0;
-        for(Parent title: titles){
-            List<Object> childList = new ArrayList<>();
-            if(i%2 == 0){
-                childList.add(new Child(String.format("Points: %d",i), /*String.format("Distance: %d",i),
-                        String.format("Duration: %d",i),*/true,false,true,false,true));
-            }else{
-                childList.add(new Child(String.format("Points: %d",i), /*String.format("Distance: %d",i),
-                        String.format("Duration: %d",i),*/false,true,false,true,false));
-            }
-            title.setChildObjectList(childList);
-            parentObject.add(title);
-            i++;
-        }
-        return parentObject;
-    }
+//    private List<ParentObject> testingOnly(){
+//        TitleCreator titleCreator = TitleCreator.get(this);
+//        List<Parent> titles = titleCreator.getAll();
+//        List<ParentObject> parentObject = new ArrayList<>();
+//        int i =0;
+//        for(Parent title: titles){
+//            List<Object> childList = new ArrayList<>();
+//            if(i%2 == 0){
+//                childList.add(new Child(String.format("Points: %d",i), /*String.format("Distance: %d",i),
+//                        String.format("Duration: %d",i),*/true,false,true,false,true));
+//            }else{
+//                childList.add(new Child(String.format("Points: %d",i), /*String.format("Distance: %d",i),
+//                        String.format("Duration: %d",i),*/false,true,false,true,false));
+//            }
+//            title.setChildObjectList(childList);
+//            parentObject.add(title);
+//            i++;
+//        }
+//        return parentObject;
+//    }
 
     public void goToMain(View view){
         finish();

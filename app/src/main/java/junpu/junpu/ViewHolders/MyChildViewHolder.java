@@ -12,7 +12,7 @@ public class MyChildViewHolder extends com.bignerdranch.expandablerecyclerview.V
 
     public TextView points, distance, duration;
 
-    public RelativeLayout safe_speed, safe_weather, safe_phone, safe_lane, safe_intersection;
+    public RelativeLayout safe_speed, safe_weather, safe_phone, safe_lane, safe_intersection,safe_music;
 
     public MyChildViewHolder(View itemView) {
         super(itemView);
@@ -30,6 +30,7 @@ public class MyChildViewHolder extends com.bignerdranch.expandablerecyclerview.V
         safe_phone = itemView.findViewById(R.id.safe_phone);
         safe_lane = itemView.findViewById(R.id.safe_lane);
         safe_intersection = itemView.findViewById(R.id.safe_intersection);
+        safe_music = itemView.findViewById(R.id.safe_music);
     }
 }
 

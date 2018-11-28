@@ -63,6 +63,7 @@ public class MyAdapter extends ExpandableRecyclerAdapter<MyParentViewHolder, MyC
         setCheckOrCross(titleChildViewHolder.safe_phone, title.isPhoneCheck(),R.id.phone_check, R.id.phone_cross);
         setCheckOrCross(titleChildViewHolder.safe_lane, title.isLaneCheck(), R.id.lane_check, R.id.lane_cross);
         setCheckOrCross(titleChildViewHolder.safe_intersection, title.isIntersectionCheck(),R.id.intersection_check, R.id.intersection_cross);
+        setCheckOrCross(titleChildViewHolder.safe_music, title.isMusicCheck(), R.id.music_check,R.id.music_cross);
     }
 
     private void setCheckOrCross(RelativeLayout rl, Boolean violated, int check, int cross){
